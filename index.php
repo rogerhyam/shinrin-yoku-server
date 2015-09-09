@@ -20,6 +20,47 @@
   }
   
   $kml_url = $protocol . $_SERVER['SERVER_NAME'] . '/kml.php?rev=' . $rev;
+  
+  // default values for center and zoom
+  $center = "55.964747,-3.210008";
+  $zoom = 11;
+  $preserve_viewport = 'false';
+  
+  // have we been passed a survey id?
+  // if so override the zoom and center
+  if(isset($_GET['survey']) && strlen($_GET['survey']) < 40 && strpos($_GET['survey'], ' ') === false ){
+    // e.g. 2710f20e-6511-4110-9030-d67033c632a0
+    
+    $survey_id = $_GET['survey'];
+    $sql = "SELECT survey_json FROM submissions WHERE survey_id = '$survey_id'";
+    $response = $mysqli->query($sql);
+    
+    if($response->num_rows){
+      $row = $response->fetch_assoc();
+      $survey = json_decode($row['survey_json']);
+      if(isset($survey->geolocation->longitude) && isset($survey->geolocation->latitude)){
+        $center = $survey->geolocation->latitude . ',' . $survey->geolocation->longitude;
+        $zoom = '18';
+        $preserve_viewport = 'true';
+      }
+      
+    } // end found row
+    
+  }// end have survey_id
+  
+  // have we been passed a center point and zoom level - possibly for "nearby" functionality
+  if(isset($_GET['center'])){
+    $center = $_GET['center'];
+  }
+  if(isset($_GET['zoom'])){
+    $zoom = $_GET['zoom'];
+  }
+  
+  // have we been asked to restrict to a username?
+  if(isset($_GET['username'])){
+    $kml_url .= '&username=' . $_GET['username'];
+  }
+  
 
 ?>
 <html>
@@ -34,21 +75,25 @@
     <script>
         function initialize() {
          
-          var edinburgh = new google.maps.LatLng(55.964747,-3.210008);
+          var center_point = new google.maps.LatLng(<?php echo $center ?>);
           var mapOptions = {
-            zoom: 11,
-            center: edinburgh
+            zoom: <?php echo $zoom ?>,
+            center: center_point
           }
 
           var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
           var ctaLayer = new google.maps.KmlLayer({
-           url: '<?php echo $kml_url ?>'
+           url: '<?php echo $kml_url ?>',
+           preserveViewport: <?php echo $preserve_viewport ?>
           });
           ctaLayer.setMap(map);
         }
         
         google.maps.event.addDomListener(window, 'load', initialize);
+        
+        
+        
     </script>
   </head>
   <body>

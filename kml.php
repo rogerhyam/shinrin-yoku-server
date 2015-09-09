@@ -16,11 +16,16 @@
    $dnode = $dom->createElement('Document');
    $docNode = $parNode->appendChild($dnode);
   
-  $sql = "SELECT s.*, u.display_name as user_name, u.id as user_id FROM submissions as s
+  $sql = "SELECT s.*, u.display_name as username, u.id as user_id FROM submissions as s
 JOIN api_keys as api on s.api_key_id = api.id
 JOIN users as u on api.user_id = u.id
-WHERE ft_row_id IS NULL AND photo IS NOT NULL";
-  
+WHERE ft_row_id IS NULL";
+
+  // basic filter is to restrict to usernam
+  if(isset($_GET['username']) && strlen($_GET['username']) < 40){
+    $sql .= " AND u.display_name = '" . $_GET['username'] ."'";
+  }
+
   $response = $mysqli->query($sql);
   
   while($row = $response->fetch_assoc()){
@@ -54,7 +59,7 @@ WHERE ft_row_id IS NULL AND photo IS NOT NULL";
         }
       }
       $date_string = date("D j M Y @ g:ia", $local_time/1000);
-      $nameNode = $dom->createElement('name',htmlentities( $row['user_name'] . " on $date_string" ));
+      $nameNode = $dom->createElement('name',htmlentities( $row['username'] . " on $date_string" ));
       $placeNode->appendChild($nameNode);
       
       /* make a description */
