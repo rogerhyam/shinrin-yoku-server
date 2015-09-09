@@ -14,8 +14,33 @@
 
     // are we uploading a file?
     if( isset($_FILES["file"]) ){
+
+        // load the survey by the id of the filename
+        $survey_id = preg_replace('/\\.[^.\\s]{3,4}$/', '', $_FILES["file"]["name"]);
+        error_log($survey_id);
+        $response = $mysqli->query("SELECT created FROM submissions WHERE survey_id = '$survey_id'");
         
-        move_uploaded_file($_FILES["file"]["tmp_name"], '../data/' . $_FILES["file"]["name"]);
+        // fail if we can't find the survey
+        if($response->num_rows < 1){
+            error_log("Can't find survey for $survey_id");
+            header("HTTP/1.1 409 Conflict");
+            echo "Sorry. Failed to add photo to survey. Can't find survey the survey in the db.";
+            exit();
+        }
+        
+        $row = $response->fetch_assoc();
+        $survey = json_decode($row['survey_json']);
+        $date_path = str_replace('-', '/', substr($row['created'], 0,10) );
+        $dir_path = '../data/' . $date_path;
+        error_log($dir_path);
+        if (!is_dir($dir_path)) {
+            mkdir($dir_path, 0777, true);
+        }
+        
+        if(move_uploaded_file($_FILES["file"]["tmp_name"], $dir_path . '/' . $_FILES["file"]["name"])){
+            $photo_path = $date_path . '/' . $_FILES["file"]["name"]; // stored in db
+            $mysqli->query("UPDATE submissions SET photo = '$photo_path' WHERE survey_id = '$survey_id'");
+        }
         
         // fixme: check file size
         // fixme: check file type
