@@ -6,7 +6,7 @@
     $db_host = 'localhost';
     $db_database = 'tenbreaths';
     $db_user = 'tenbreaths';
-    $db_password = '***';
+    $db_password = 'breaths10';
   
     // create and initialise the database connection
     $mysqli = new mysqli($db_host, $db_user, $db_password, $db_database);    

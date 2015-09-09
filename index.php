@@ -27,14 +27,9 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <title>Ten Breaths Map</title>
-    <style>
-      html, body, #map-canvas {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-
-    </style>
+    
+    <link rel="stylesheet" type="text/css" href="style/main.css">
+    
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
     <script>
         function initialize() {
@@ -52,13 +47,21 @@
           });
           ctaLayer.setMap(map);
         }
+        
         google.maps.event.addDomListener(window, 'load', initialize);
     </script>
   </head>
   <body>
-    <h1>Ten Breaths Map</h1>
-    <?php echo $kml_url ?>
-    <div id="map-canvas"></div>
+    
+    <header>
+      <button>Menu</button>
+      <h1>The Ten Breaths Map</h1>
+      
+    </header>
+    <div id="appcontent">
+        <div id="map-canvas"></div>
+    </div>
+
   </body>
 </html>
 
