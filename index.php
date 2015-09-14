@@ -22,12 +22,14 @@
   $kml_url = $protocol . $_SERVER['SERVER_NAME'] . '/kml.php?rev=' . $rev;
   
   // default values for center and zoom
-  $center = "55.964747,-3.210008";
+  $center_lon = -3.210008;
+  $center_lat = 55.964747;
   $zoom = 11;
   $preserve_viewport = 'false';
   
   // have we been passed a survey id?
   // if so override the zoom and center
+  $survey_id = false;
   if(isset($_GET['survey']) && strlen($_GET['survey']) < 40 && strpos($_GET['survey'], ' ') === false ){
     // e.g. 2710f20e-6511-4110-9030-d67033c632a0
     
@@ -39,7 +41,8 @@
       $row = $response->fetch_assoc();
       $survey = json_decode($row['survey_json']);
       if(isset($survey->geolocation->longitude) && isset($survey->geolocation->latitude)){
-        $center = $survey->geolocation->latitude . ',' . $survey->geolocation->longitude;
+        $center_lon = $survey->geolocation->longitude;
+        $center_lat = $survey->geolocation->latitude;
         $zoom = '18';
         $preserve_viewport = 'true';
       }
@@ -68,33 +71,13 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <title>Ten Breaths Map</title>
-    
+    <link rel="stylesheet" href="js/openlayers-3.9.0/ol.css" type="text/css">
     <link rel="stylesheet" type="text/css" href="style/main.css">
     
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
-    <script>
-        function initialize() {
-         
-          var center_point = new google.maps.LatLng(<?php echo $center ?>);
-          var mapOptions = {
-            zoom: <?php echo $zoom ?>,
-            center: center_point
-          }
-
-          var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-
-          var ctaLayer = new google.maps.KmlLayer({
-           url: '<?php echo $kml_url ?>',
-           preserveViewport: <?php echo $preserve_viewport ?>
-          });
-          ctaLayer.setMap(map);
-        }
-        
-        google.maps.event.addDomListener(window, 'load', initialize);
-        
-        
-        
-    </script>
+    <script src="js/jquery-1.11.3.min.js" type="text/javascript"></script>
+    <script src="js/openlayers-3.9.0/ol.js" type="text/javascript"></script>
+    <script src="js/main.js" type="text/javascript"></script>
+    
   </head>
   <body>
     
@@ -104,9 +87,19 @@
       
     </header>
     <div id="appcontent">
-        <div id="map-canvas"></div>
+        <div
+          id="map-canvas"
+          class="map-canvas" 
+          data-tb-center-lon="<?php echo $center_lon; ?>"
+          data-tb-center-lat="<?php echo $center_lat; ?>"
+          data-tb-zoom="<?php echo $zoom; ?>"
+          data-tb-survey="<?php echo $survey_id; ?>"
+          ></div>
     </div>
-
+    <div id="popup" class="ol-popup">
+      <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+      <div id="popup-content"></div>
+    </div>
   </body>
 </html>
 

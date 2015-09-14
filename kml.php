@@ -45,7 +45,7 @@ WHERE ft_row_id IS NULL";
       $placeNode = $docNode->appendChild($node);
 
       // Creates an id attribute and assign it the value of id column.
-      $placeNode->setAttribute('id', 'placemark' . $survey_id);
+      $placeNode->setAttribute('id', $survey_id);
 
       // a name for the place - based on the username and data
       $local_time = $survey->started;
