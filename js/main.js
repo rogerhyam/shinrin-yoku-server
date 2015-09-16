@@ -31,13 +31,13 @@ $( document ).ready(function() {
       parseFloat($('#map-canvas').data('tb-center-lon')),
       parseFloat($('#map-canvas').data('tb-center-lat'))
     ];
-    
+
     var map = new ol.Map({
     target: 'map-canvas',
         layers: [osmLayer, kmlLayer ],
         view: new ol.View({
             center: ol.proj.transform(center, 'EPSG:4326', 'EPSG:3857'),
-            zoom: $('#map-canvas').data('tb-zoom')
+            zoom: 10
         }),
         overlays: [overlay],
         controls: ol.control.defaults({
@@ -47,17 +47,34 @@ $( document ).ready(function() {
         }),
     });
     
-    // do we have a default survey flagged to load?
-    var survey_id = $('#map-canvas').data('tb-survey');
-    if(survey_id){
-      var source = kmlLayer.getSource();
-      source.on('addfeature', function(evt){
-          if(evt.feature.getId() == survey_id){
-            console.log(evt.feature);
-            showPopup(evt.feature);
+    // the kmlLayer only fires change when it finishes loading
+    var source = kmlLayer.getSource();
+    kmlLayer.on('change', function(evt){
+        
+        if($('#map-canvas').data('tb-zoom')){
+          console.log( $('#map-canvas').data('tb-zoom') );
+          map.getView().setZoom($('#map-canvas').data('tb-zoom'));
+        }else{
+          // zoom to extent of kml layer
+          console.log(source.getExtent());
+          var extent = source.getExtent();
+          map.getView().fit(extent, map.getSize());
+        }
+        
+        // if we have been passed an id then try and load it
+        var survey_id = $('#map-canvas').data('tb-survey');
+        if(survey_id){
+          
+          var f = source.getFeatureById(survey_id);
+          if(f){
+            console.log(f);
+            showPopup(f);
           }
-      });
+      
     }
+        
+        
+    });
     
     map.on('singleclick', function(evt) {
       displayFeatureInfo(evt);

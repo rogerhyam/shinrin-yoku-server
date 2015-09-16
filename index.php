@@ -24,7 +24,7 @@
   // default values for center and zoom
   $center_lon = -3.210008;
   $center_lat = 55.964747;
-  $zoom = 11;
+  $zoom = false;
   $preserve_viewport = 'false';
   
   // have we been passed a survey id?
@@ -43,7 +43,7 @@
       if(isset($survey->geolocation->longitude) && isset($survey->geolocation->latitude)){
         $center_lon = $survey->geolocation->longitude;
         $center_lat = $survey->geolocation->latitude;
-        $zoom = '18';
+        $zoom = 17;
         $preserve_viewport = 'true';
       }
       
@@ -92,7 +92,9 @@
           class="map-canvas" 
           data-tb-center-lon="<?php echo $center_lon; ?>"
           data-tb-center-lat="<?php echo $center_lat; ?>"
-          data-tb-zoom="<?php echo $zoom; ?>"
+          <?php if($zoom){ ?>
+              data-tb-zoom="<?php echo $zoom; ?>"
+          <?php } ?>
           data-tb-survey="<?php echo $survey_id; ?>"
           ></div>
     </div>
