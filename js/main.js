@@ -164,7 +164,7 @@ $( document ).ready(function() {
             });
             map.beforeRender(pan, zoom);
             map.getView().setCenter(clusters[0].getGeometry().getCoordinates());
-            map.getView().setZoom(map.getView().getZoom() + 1 );
+            map.getView().setZoom(map.getView().getZoom() + 2 );
         }
       }
       
