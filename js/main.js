@@ -143,10 +143,28 @@ $( document ).ready(function() {
       
       // if we have clicked on a single cluster
       if(clusters.length > 0 && clusters.length < 2){
-        // if the cluster only contains a single feature
+        
+        // if the cluster only contains a single feature show it
+        // otherwize zoom in
         var features = clusters[0].get("features");
         if(features.length == 1){
           showPopup(features[0]);
+        }else{
+            var duration = 1000;
+            var start = +new Date();
+            var pan = ol.animation.pan({
+              duration: duration,
+              source: /** @type {ol.Coordinate} */ (map.getView().getCenter()),
+              start: start
+            });
+            var zoom = ol.animation.zoom({
+              duration: duration,
+              resolution: map.getView().getResolution(),
+              start: start
+            });
+            map.beforeRender(pan, zoom);
+            map.getView().setCenter(clusters[0].getGeometry().getCoordinates());
+            map.getView().setZoom(map.getView().getZoom() + 1 );
         }
       }
       
