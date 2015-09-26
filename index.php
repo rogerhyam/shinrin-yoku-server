@@ -43,7 +43,6 @@
       if(isset($survey->geolocation->longitude) && isset($survey->geolocation->latitude)){
         $center_lon = $survey->geolocation->longitude;
         $center_lat = $survey->geolocation->latitude;
-        $zoom = 17;
         $preserve_viewport = 'true';
       }
       
@@ -94,6 +93,8 @@
           data-tb-center-lat="<?php echo $center_lat; ?>"
           <?php if($zoom){ ?>
               data-tb-zoom="<?php echo $zoom; ?>"
+          <?php }else{ ?>
+              data-tb-zoom="<?php echo 10; ?>"
           <?php } ?>
           data-tb-survey="<?php echo $survey_id; ?>"
           ></div>

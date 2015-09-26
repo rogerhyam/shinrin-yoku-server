@@ -3,13 +3,34 @@
     kicking off jquery 
 */
 $( document ).ready(function() {
-   
-    // initialise the map
-    var kmlLayer = new ol.layer.Vector({
-            source: new ol.source.Vector({
-            url: 'kml.php',
-            format: new ol.format.KML()
-        })
+
+    var geojsonFormat = new ol.format.GeoJSON();
+    var geojsonLoader = function(extent, resolution, projection) {
+
+        var bottomLeft = ol.proj.transform(ol.extent.getBottomLeft(extent), 'EPSG:3857', 'EPSG:4326');
+        var topRight = ol.proj.transform(ol.extent.getTopRight(extent), 'EPSG:3857', 'EPSG:4326');
+        
+        var url = 'geojson.php'
+          + '?left='  + wrapLon(bottomLeft[0])
+          + '&right=' + wrapLon(topRight[0])
+          + '&top='   + topRight[1]
+          + '&bottom=' + bottomLeft[1]
+          + '&resolution=' + resolution;
+       
+        $.ajax(url).then(function(response) {
+          var features = geojsonFormat.readFeatures(response, {featureProjection: 'EPSG:3857'});
+          geojsonSource.addFeatures(features);
+        });
+    
+    }
+    
+    var geojsonSource = new ol.source.Vector({
+      strategy: ol.loadingstrategy.bbox,
+      loader: geojsonLoader
+    });
+    
+    var geojsonLayer = new ol.layer.Vector({
+      source: geojsonSource
     });
 
     var osmLayer = new ol.layer.Tile({
@@ -34,7 +55,7 @@ $( document ).ready(function() {
 
     var map = new ol.Map({
     target: 'map-canvas',
-        layers: [osmLayer, kmlLayer ],
+        layers: [osmLayer, geojsonLayer],
         view: new ol.View({
             center: ol.proj.transform(center, 'EPSG:4326', 'EPSG:3857'),
             zoom: 10
@@ -47,31 +68,27 @@ $( document ).ready(function() {
         }),
     });
     
-    // the kmlLayer only fires change when it finishes loading
-    var source = kmlLayer.getSource();
-    kmlLayer.on('change', function(evt){
+    // the geojsonLayer only fires change when it finishes loading
+    geojsonLayer.on('change', function(evt){
+        
+        console.log("geojson loaded");
         
         if($('#map-canvas').data('tb-zoom')){
           console.log( $('#map-canvas').data('tb-zoom') );
-          map.getView().setZoom($('#map-canvas').data('tb-zoom'));
-        }else{
-          // zoom to extent of kml layer
-          console.log(source.getExtent());
-          var extent = source.getExtent();
-          map.getView().fit(extent, map.getSize());
+          var z = $('#map-canvas').data('tb-zoom');
+          $('#map-canvas').data('tb-zoom', false); // only once
+          map.getView().setZoom(z);
         }
         
         // if we have been passed an id then try and load it
-        var survey_id = $('#map-canvas').data('tb-survey');
-        if(survey_id){
-          
-          var f = source.getFeatureById(survey_id);
+        if( $('#map-canvas').data('tb-survey') ){
+          var survey_id = $('#map-canvas').data('tb-survey');
+          $('#map-canvas').data('tb-survey', false); // only once
+          var f = geojsonSource.getFeatureById(survey_id);
           if(f){
-            console.log(f);
             showPopup(f);
           }
-      
-    }
+        }
         
         
     });
@@ -109,7 +126,7 @@ $( document ).ready(function() {
     
     var showPopup = function(feature, hidden){
       
-      var html = "<strong>" + feature.get('name') + "</strong>";
+      var html = "<strong>" + feature.get('title') + "</strong>";
         html += "<hr/>";
         html += feature.get('description');
     
@@ -123,9 +140,11 @@ $( document ).ready(function() {
         // show the overlay
         var coordinate = feature.getGeometry().getCoordinates();
         overlay.setPosition(coordinate);
-      
     }
-       
-
    
 });
+
+function wrapLon(value) {
+  var worlds = Math.floor((value + 180) / 360);
+  return value - (worlds * 360);
+}
