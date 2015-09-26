@@ -29,8 +29,39 @@ $( document ).ready(function() {
       loader: geojsonLoader
     });
     
-    var geojsonLayer = new ol.layer.Vector({
+    var clusterSource = new ol.source.Cluster({
+      distance: 20,
       source: geojsonSource
+    });
+    
+    var styleCache = {};
+    var clusterLayer = new ol.layer.Vector({
+        source: clusterSource,
+        style: function(feature, resolution) {
+          var size = feature.get('features').length;
+          var style = styleCache[size];
+          if (!style) {
+            style = [new ol.style.Style({
+              image: new ol.style.Circle({
+                radius: 10,
+                stroke: new ol.style.Stroke({
+                  color: '#fff'
+                }),
+                fill: new ol.style.Fill({
+                  color: '#3399CC'
+                })
+              }),
+              text: new ol.style.Text({
+                text: size.toString(),
+                fill: new ol.style.Fill({
+                  color: '#fff'
+                })
+              })
+            })];
+            styleCache[size] = style;
+          }
+          return style;
+        }
     });
 
     var osmLayer = new ol.layer.Tile({
@@ -55,7 +86,7 @@ $( document ).ready(function() {
 
     var map = new ol.Map({
     target: 'map-canvas',
-        layers: [osmLayer, geojsonLayer],
+        layers: [osmLayer, clusterLayer],
         view: new ol.View({
             center: ol.proj.transform(center, 'EPSG:4326', 'EPSG:3857'),
             zoom: 10
@@ -69,7 +100,7 @@ $( document ).ready(function() {
     });
     
     // the geojsonLayer only fires change when it finishes loading
-    geojsonLayer.on('change', function(evt){
+    geojsonSource.on('change', function(evt){
         
         console.log("geojson loaded");
         
@@ -105,35 +136,30 @@ $( document ).ready(function() {
     
     var displayFeatureInfo = function(evt){
       
-      var features = [];
+      var clusters = [];
       map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
-        features.push(feature);
+        clusters.push(feature);
       });
       
-      // populate the overlay
-      if(features.length > 0){
-        
-        var hidden = false;
-        if(features.length > 1){
-          hidden = features.length -1;
+      // if we have clicked on a single cluster
+      if(clusters.length > 0 && clusters.length < 2){
+        // if the cluster only contains a single feature
+        var features = clusters[0].get("features");
+        if(features.length == 1){
+          showPopup(features[0]);
         }
-        
-        showPopup(features[0], hidden);
-        
       }
       
     };
     
-    var showPopup = function(feature, hidden){
+    var showPopup = function(feature){
+      
+      console.log(feature);
       
       var html = "<strong>" + feature.get('title') + "</strong>";
+        
         html += "<hr/>";
         html += feature.get('description');
-    
-        if(hidden){
-          html += "<hr/>";
-          html += "<p>And "+ hidden + " others</p>";
-        }
     
         $('#popup-content').html( html );  
       
