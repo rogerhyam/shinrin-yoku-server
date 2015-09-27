@@ -183,9 +183,9 @@ $( document ).ready(function() {
         
         // set the facebook share url
         console.log();
-        $('#popup-fb-share').data('href', $('#popup-fb-share').data('tenbreaths-base-url') + 'survey-' + feature.getId() );
+        $('#popup').data('href', $('#popup').data('tenbreaths-base-url') + 'survey-' + feature.getId() );
         
-        console.log($('#popup-fb-share').data('href'));
+        console.log($('#popup').data('href'));
       
         // show the overlay
         var coordinate = feature.getGeometry().getCoordinates();
@@ -194,7 +194,17 @@ $( document ).ready(function() {
     
     $('#popup-fb-share').on('click',function(){
       window.open(
-        "https://www.facebook.com/sharer/sharer.php?u=" + $('#popup-fb-share').data('href'),
+        "https://www.facebook.com/sharer/sharer.php?u=" + $('#popup').data('href'),
+        '',
+        'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600'
+      );
+    });
+    
+    $('#popup-twitter-share').on('click',function(){
+      window.open(
+        "https://twitter.com/intent/tweet?url=" + encodeURIComponent($('#popup').data('href')) 
+            + "&text=" + encodeURIComponent($('#popup strong').html())
+            + "&via=tenbreathsmap",
         '',
         'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600'
       );

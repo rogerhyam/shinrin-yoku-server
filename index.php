@@ -23,6 +23,7 @@
   // if so override the zoom and center
   $survey_id = false;
   $fb_tags = array();
+  $twitter_tags = array();
   if(isset($_GET['survey']) && strlen($_GET['survey']) < 40 && strpos($_GET['survey'], ' ') === false ){
     // e.g. 2710f20e-6511-4110-9030-d67033c632a0
     
@@ -44,23 +45,37 @@
         $preserve_viewport = 'true';
       }
       
+      // social media here we come
+      $social_title = 'A Ten Breaths Place by ' . $row['display_name'] . ' on ' . getDateStringFromSurvey($survey);
+
+      
       // set up the facebook meta tagging so fb can crawl the page
       $fb_tags['og:url']  = $site_url . 'survey-' . $survey_id;
       $fb_tags['og:type']  = 'place';
       $fb_tags['og:site_name'] = 'Ten Breaths Map';
       $fb_tags['place:location:latitude'] = $survey->geolocation->latitude;
       $fb_tags['place:location:longitude'] = $survey->geolocation->longitude;
-      $fb_tags['og:title'] = 'A Ten Breaths Place by ' . $row['display_name'] . ' on ' . getDateStringFromSurvey($survey);
+      $social_title = 'A Ten Breaths Place by ' . $row['display_name'] . ' on ' . getDateStringFromSurvey($survey);
+      $fb_tags['og:title'] = $social_title;
+      $twitter_tags['twitter:title'] = $social_title;
       if(isset($survey->textComments)){
         $comment = $survey->textComments;
         if(strlen($comment) > 0){
          $fb_tags['og:description'] = $survey->textComments;
+         $twitter_tags['twitter:description'] = $survey->textComments;
         }
       }
       if($row['photo']){
-         $fb_tags['og:image'] = $site_url . 'data/' . $row['photo'];
+         $image_url = $site_url . 'data/' . $row['photo'];
+         $fb_tags['og:image'] = $image_url;
+         $twitter_tags['twitter:image'] = $image_url;
       }
       
+      // set up the twitter card specific meta tagging
+      $twitter_tags['twitter:card'] = 'summary_large_image';
+      $twitter_tags['twitter:creator'] = '@rogerhyam';
+      $twitter_tags['twitter:site'] = '@tenbreathsmap';
+  
     } // end found row
     
   }// end have survey_id
@@ -82,6 +97,11 @@
     <!-- Facebook Meta -->
     <?php foreach($fb_tags as $property => $content){ ?>
       <meta property="<?php echo $property ?>" content="<?php echo $content; ?>" />
+    <?php } // end for each tag ?>
+    
+    <!-- Twitter Meta -->
+    <?php foreach($twitter_tags as $name => $content){ ?>
+      <meta name="<?php echo $name ?>" content="<?php echo $content; ?>" />
     <?php } // end for each tag ?>
   
     <title>Ten Breaths Map</title>
@@ -113,11 +133,11 @@
           data-tb-survey="<?php echo $survey_id; ?>"
           ></div>
     </div>
-    <div id="popup" class="ol-popup">
+    <div id="popup" class="ol-popup" data-tenbreaths-base-url="<?php echo $site_url ?>">
       <a href="#" id="popup-closer" class="ol-popup-closer"></a>
       <div id="popup-content"></div>
-      <!-- fb share button code -->
-      <button id="popup-fb-share" data-tenbreaths-base-url="<?php echo $site_url ?>">Share on FaceBook</button>
+      <button id="popup-fb-share" >Share on FaceBook</button>
+      <button id="popup-twitter-share" >Share on Twitter</button>
     </div>
   </body>
 </html>
