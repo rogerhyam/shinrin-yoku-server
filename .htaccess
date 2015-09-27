@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule survey-(.*) /index.php?survey=$1

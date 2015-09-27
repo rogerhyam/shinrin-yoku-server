@@ -179,12 +179,27 @@ $( document ).ready(function() {
         html += "<hr/>";
         html += feature.get('description');
     
-        $('#popup-content').html( html );  
+        $('#popup-content').html( html );
+        
+        // set the facebook share url
+        console.log();
+        $('#popup-fb-share').data('href', $('#popup-fb-share').data('tenbreaths-base-url') + 'survey-' + feature.getId() );
+        
+        console.log($('#popup-fb-share').data('href'));
       
         // show the overlay
         var coordinate = feature.getGeometry().getCoordinates();
         overlay.setPosition(coordinate);
     }
+    
+    $('#popup-fb-share').on('click',function(){
+      window.open(
+        "https://www.facebook.com/sharer/sharer.php?u=" + $('#popup-fb-share').data('href'),
+        '',
+        'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600'
+      );
+    });
+    
    
 });
 

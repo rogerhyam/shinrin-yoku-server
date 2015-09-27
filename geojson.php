@@ -34,19 +34,7 @@ WHERE ft_row_id IS NULL";
       // add some properties to it
       $feature->properties = new stdClass();
       
-      // a name for the place - based on the username and data
-      $local_time = $survey->started;
-      
-      if(isset($survey->timezoneOffset)){
-        $diff_milli = abs($survey->timezoneOffset * 60 * 1000 );
-        if($survey->timezoneOffset < 0){
-          $local_time = $local_time +  $diff_milli;
-        }else{
-          $local_time = $local_time - $diff_milli;
-        }
-      }
-      $date_string = date("D j M Y @ g:ia", $local_time/1000);
-      $feature->properties->title = $row['username'] . " on $date_string";
+      $feature->properties->title = $row['username'] . " on " . getDateStringFromSurvey($survey);
       
       $desc = '<div>';
       if($row['photo']){
