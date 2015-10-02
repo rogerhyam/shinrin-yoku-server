@@ -107,17 +107,41 @@
     <title>Ten Breaths Map</title>
     <link rel="stylesheet" href="js/openlayers-3.9.0/ol.css" type="text/css">
     <link rel="stylesheet" type="text/css" href="style/main.css">
+    <link rel="stylesheet" type="text/css" href="style/cssmenu/styles.css">
     
     <script src="js/jquery-1.11.3.min.js" type="text/javascript"></script>
+    <script src="style/cssmenu/script.js" type="text/javascript"></script>
     <script src="js/openlayers-3.9.0/ol.js" type="text/javascript"></script>
+    <script src="js/mapsconfig.js" type="text/javascript"></script>
     <script src="js/main.js" type="text/javascript"></script>
+    
     
   </head>
   <body>
     <header>
-      <button>Menu</button>
-      <h1>The Ten Breaths Map</h1>
-      
+      <div id='cssmenu'>
+          <ul>
+             <li><a href="/">Ten Breaths</a></li>
+             <li class='active'><a href='#'>Maps</a>
+                <ul id="maps-sub-menu">
+                   <li><a href='#'>Edinburgh</a></li>
+                   <li><a href='#'>Scotland</a></li>
+                </ul>
+             </li>
+             <li><a href='#'>Layers</a>
+                <ul id="layers-sub-menu" >
+                   <li><a href='#'>Base Layer</a>
+                     <ul id="base-layers-sub-menu" >
+                     </ul>
+                   </li>
+                   <li><a href='#'>Edinburgh</a></li>
+                   <li><a href='#'>Scotland</a></li>
+                </ul>
+                </li>
+             <li><a href='#' onclick="mapsConfig.showPopupPage('about-page')" >About</a></li>
+             <li><a href='#' onclick="mapsConfig.showPopupPage('contact-page')" >Contact</a></li>
+          </ul>
+      </div>
     </header>
     <div id="appcontent">
         <div
@@ -136,9 +160,60 @@
     <div id="popup" class="ol-popup" data-tenbreaths-base-url="<?php echo $site_url ?>">
       <a href="#" id="popup-closer" class="ol-popup-closer"></a>
       <div id="popup-content"></div>
-      <button id="popup-fb-share" >Share on FaceBook</button>
-      <button id="popup-twitter-share" >Share on Twitter</button>
+      <button id="popup-fb-share" >FaceBook</button>
+      <button id="popup-twitter-share" >Twitter</button>
+      <button id="popup-link" >Link</button>
+      <button id="popup-info" >Info</button>
     </div>
+    
+    <!-- About page -->
+    <div id="about-page" class="popup-page">
+      <a href="#" class="popup-page-closer">close</a>
+      <h2>About Ten Breaths Map</h2>
+      <p><strong>The Ten Breaths Map is a map of the natural places that nourish and heal 
+      made by the very people who are nourished and healed by those places.</strong>
+      Its aim is to link together individuals' felt experiences of places with data about the natural world that supports those experiences. 
+      It is hoped the map will inform decision making in urban planning, health and nature conservation.
+      </p>
+      <p>The system consists of a mobile phone app and database exposed through this website.
+         Points are added to the map by surveyors doing a simple mindfulness practice at the locations they find restorative when they find them restorative.</p>
+      <p>The mindfulness practice is an established Buddhist technique. It involves holding ones attention still whilst taking ten conscious breaths.</p>
+      <p>The mobile phone app records the precise location of the place whilst helping the surveyor count their breaths.
+      It also enables them to add a photo and some words that sum up their experience to the report.</p>
+      
+      <p>The act of surveying locations for the map should be an act of healing.
+      In drawing the map we aim to deepen the surveyors' connections with nature
+      as well as produce data that is useful for science.</p>
+      
+      <h3>Status</h3>
+      <p>We are still in the "playing" phase where we test out different ideas and technologies to see what is feasible.
+      This is way before a Beta phase or even and Alpha phase!</p>
+      
+      <h3>Thanks</h3>
+      <p>The data data layers presented on the map that start with SNH are pulled live from the 
+      <a href="http://www.snh.gov.uk/publications-data-and-research/snhi-information-service/">Scottish Natural Heritage Information Service</a> under an 
+      <a href="http://www.nationalarchives.gov.uk/doc/open-government-licence/" >Open Government Licence</a>.</p>
+      <p>The book <a href="http://www.amazon.co.uk/dp/1937006395">Ten Breaths To Happiness: Touching Life in Its Fullness </a> by Glen Schneider was 
+      helped to clarify the mindfulness technique to use and provides a good background reading.</p>
+      
+    </div>
+    
+    <!-- Contact page -->
+    <div id="contact-page" class="popup-page">
+      <a href="#" class="popup-page-closer">close</a>
+      <h2>Contact Us</h2>
+      <p>Any questions or comments? I'd love to hear from you. Roger Hyam <a href="mailto:r.hyam@rbge.org.uk">r.hyam@rbge.org.uk</a></p>
+    </div>
+    
+    <!-- Contact page -->
+    <div id="info-page" class="popup-page">
+      <a href="#" class="popup-page-closer">close</a>
+      <h2>Survey Information</h2>
+      <div class="content">
+        <p>This will be replaced by details of the survey point.</p>
+      </div>
+    </div>
+    
   </body>
 </html>
 

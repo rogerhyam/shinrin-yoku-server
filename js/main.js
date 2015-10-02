@@ -2,8 +2,13 @@
 /*
     kicking off jquery 
 */
+/* global ol */
+/* global mapsConfig */
+
 $( document ).ready(function() {
 
+    // - T E N  B R E A T H S   L A Y E R -
+    
     var geojsonFormat = new ol.format.GeoJSON();
     var geojsonLoader = function(extent, resolution, projection) {
 
@@ -11,8 +16,8 @@ $( document ).ready(function() {
         var topRight = ol.proj.transform(ol.extent.getTopRight(extent), 'EPSG:3857', 'EPSG:4326');
         
         var url = 'geojson.php'
-          + '?left='  + wrapLon(bottomLeft[0])
-          + '&right=' + wrapLon(topRight[0])
+          + '?left='  + mapsConfig.wrapLon(bottomLeft[0])
+          + '&right=' + mapsConfig.wrapLon(topRight[0])
           + '&top='   + topRight[1]
           + '&bottom=' + bottomLeft[1]
           + '&resolution=' + resolution;
@@ -63,10 +68,6 @@ $( document ).ready(function() {
           return style;
         }
     });
-
-    var osmLayer = new ol.layer.Tile({
-      source: new ol.source.OSM()
-    });
     
     /**
      * Create an overlay to anchor the popup to the map.
@@ -83,22 +84,10 @@ $( document ).ready(function() {
       parseFloat($('#map-canvas').data('tb-center-lon')),
       parseFloat($('#map-canvas').data('tb-center-lat'))
     ];
-
-    var map = new ol.Map({
-    target: 'map-canvas',
-        layers: [osmLayer, clusterLayer],
-        view: new ol.View({
-            center: ol.proj.transform(center, 'EPSG:4326', 'EPSG:3857'),
-            zoom: 10
-        }),
-        overlays: [overlay],
-        controls: ol.control.defaults({
-            attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
-            collapsible: false
-        })
-        }),
-    });
     
+    mapsConfig.map.addLayer(clusterLayer);
+    mapsConfig.map.addOverlay(overlay);
+
     // the geojsonLayer only fires change when it finishes loading
     geojsonSource.on('change', function(evt){
         
@@ -108,7 +97,7 @@ $( document ).ready(function() {
           console.log( $('#map-canvas').data('tb-zoom') );
           var z = $('#map-canvas').data('tb-zoom');
           $('#map-canvas').data('tb-zoom', false); // only once
-          map.getView().setZoom(z);
+          mapsConfig.map.getView().setZoom(z);
         }
         
         // if we have been passed an id then try and load it
@@ -124,7 +113,7 @@ $( document ).ready(function() {
         
     });
     
-    map.on('singleclick', function(evt) {
+    mapsConfig.map.on('singleclick', function(evt) {
       displayFeatureInfo(evt);
     });
     
@@ -137,7 +126,7 @@ $( document ).ready(function() {
     var displayFeatureInfo = function(evt){
       
       var clusters = [];
-      map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
+      mapsConfig.map.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
         clusters.push(feature);
       });
       
@@ -154,17 +143,17 @@ $( document ).ready(function() {
             var start = +new Date();
             var pan = ol.animation.pan({
               duration: duration,
-              source: /** @type {ol.Coordinate} */ (map.getView().getCenter()),
+              source: /** @type {ol.Coordinate} */ (mapsConfig.map.getView().getCenter()),
               start: start
             });
             var zoom = ol.animation.zoom({
               duration: duration,
-              resolution: map.getView().getResolution(),
+              resolution: mapsConfig.map.getView().getResolution(),
               start: start
             });
-            map.beforeRender(pan, zoom);
-            map.getView().setCenter(clusters[0].getGeometry().getCoordinates());
-            map.getView().setZoom(map.getView().getZoom() + 2 );
+            mapsConfig.map.beforeRender(pan, zoom);
+            mapsConfig.map.getView().setCenter(clusters[0].getGeometry().getCoordinates());
+            mapsConfig.map.getView().setZoom(mapsConfig.map.getView().getZoom() + 2 );
         }
       }
       
@@ -181,17 +170,16 @@ $( document ).ready(function() {
     
         $('#popup-content').html( html );
         
-        // set the facebook share url
-        console.log();
+        // set the facebook & other share url
         $('#popup').data('href', $('#popup').data('tenbreaths-base-url') + 'survey-' + feature.getId() );
+        $('#popup').data('survey_id', feature.getId());
         
-        console.log($('#popup').data('href'));
-      
         // show the overlay
         var coordinate = feature.getGeometry().getCoordinates();
         overlay.setPosition(coordinate);
-    }
+    };
     
+    // show fb share window
     $('#popup-fb-share').on('click',function(){
       window.open(
         "https://www.facebook.com/sharer/sharer.php?u=" + $('#popup').data('href'),
@@ -200,6 +188,7 @@ $( document ).ready(function() {
       );
     });
     
+    // show twitter share window
     $('#popup-twitter-share').on('click',function(){
       window.open(
         "https://twitter.com/intent/tweet?url=" + encodeURIComponent($('#popup').data('href')) 
@@ -210,10 +199,16 @@ $( document ).ready(function() {
       );
     });
     
+    // link goes to the href
+    $('#popup-link').on('click',function(){
+      window.location.href = $('#popup').data('href');
+    });
+    
+    // link goes to the href
+    $('#popup-info').on('click',function(){
+      $('#info-page .content').load('info.php?survey=' + $('#popup').data('survey_id'));
+      mapsConfig.showPopupPage('info-page');
+    });
    
-});
+}); // end doc ready
 
-function wrapLon(value) {
-  var worlds = Math.floor((value + 180) / 360);
-  return value - (worlds * 360);
-}
