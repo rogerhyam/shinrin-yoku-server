@@ -70,7 +70,7 @@ function process_survey($survey, $submission_id){
 }
 
 function get_nbn_species_for_polygon($wkt){
-    $url = "https://data.nbn.org.uk/api/taxonObservations/species?polygon=" . urlencode($wkt);
+    $url = "https://data.nbn.org.uk/api/taxonObservations/species?absence=false&polygon=" . urlencode($wkt);
     //$json = CurlGetString($url);
     $json = file_get_contents($url);
     //echo $url;
