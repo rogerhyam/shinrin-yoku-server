@@ -34,7 +34,7 @@
 <p>
     <?php
         echo $survey->geolocation->display_string;
-        var_dump($survey);
+        // var_dump($survey);
     ?>
 </p>
 

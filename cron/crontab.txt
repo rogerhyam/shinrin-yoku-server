@@ -1,0 +1,2 @@
+*/10 * * * * php /var/tenbreaths/cron/nbn_point_buffer.php
+*/10 * * * * php /var/tenbreaths/cron/osm_reverse_geocode.php
