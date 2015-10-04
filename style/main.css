@@ -96,3 +96,10 @@ header {
 .popup-page-closer{
   float: right;
 }
+
+.tenbreaths-survey-info img{
+  float: right;
+  max-height: 300px;
+  max-widht: 300px;
+  
+}

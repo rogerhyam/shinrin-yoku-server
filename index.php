@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <?php
-  
   require_once('config.php');
   header("Access-Control-Allow-Origin: *");
-  
   
   // where are we
   if( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ){
