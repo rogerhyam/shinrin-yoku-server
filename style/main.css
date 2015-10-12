@@ -100,7 +100,63 @@ header {
 .tenbreaths-survey-info img{
   float: right;
   max-height: 300px;
-  max-widht: 300px;
+  max-width: 300px;
   opacity: 1;
   
+}
+
+.osm-tag-cloud{
+  float:right;
+  max-width: 300px;
+  border:solid 1px black;
+  padding: 1em;
+  text-align: center;
+  vertical-align: -40%;
+  line-height: 0.9;
+  font-family: Arial;
+}
+.osm-tag-cloud span{
+  /*text-shadow: 0px 0px 20px blue;*/
+  
+}
+.osm-tag-cloud-01{
+  font-size:110%;
+  z-index: 1001;
+}
+.osm-tag-cloud-02{
+  font-size:120%;
+  z-index: 1002;
+}
+.osm-tag-cloud-03{
+  font-size:130%;
+  z-index: 1003;
+}
+.osm-tag-cloud-04{
+  font-size:140%;
+  z-index: 1004;
+}
+.osm-tag-cloud-05{
+  font-size:150%;
+  z-index: 1005;
+}
+.osm-tag-cloud-06{
+  font-size:160%;
+  z-index: 1006;
+}
+.osm-tag-cloud-07{
+  font-size:170%;
+  z-index: 1007;
+}
+.osm-tag-cloud-08{
+  font-size:180%;
+  z-index: 1008;
+}
+.osm-tag-cloud-09{
+  font-size:190%;
+  z-index: 1009;
+}
+
+.osm-tag-cloud-10{
+  font-size:200%;
+  z-index: 1010;
 }

@@ -28,6 +28,14 @@
     if($photo){
       echo '<img src="/data/'. $photo .'" />';   
     }
+    
+    // the OSM tag cloud
+    $response = $mysqli->query("SELECT * FROM au_osm_nodes WHERE submission_id = $submission_id");
+    if($response->num_rows == 1){
+        include_once('lib/osm_nodes_tag_cloud.php');
+        $row = $response->fetch_assoc();
+        osm_nodes_tag_cloud($row['raw']);
+    }
 ?>
 <h3>Survey Information</h3>
 <p style="color: orange;">This is work in progress!</p>
@@ -56,6 +64,7 @@
     }else{
         echo "No address found";
     }
+    
 ?>
 </p>
 
@@ -70,7 +79,6 @@
         // first output the totals.
         echo '<p><strong>Total species: </strong>'. $row['taxon_count'].'</p>';
         echo '<p><strong>Total records: </strong>'. $row['observation_count'].'</p>';
-        
         
         // create a rendering friendly array
         $render = array();
