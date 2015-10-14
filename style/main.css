@@ -97,8 +97,11 @@ header {
   float: right;
 }
 
-.tenbreaths-survey-info img{
+.tenbreaths-survey-info-float{
   float: right;
+}
+
+.tenbreaths-survey-info-float img{
   max-height: 300px;
   max-width: 300px;
   opacity: 1;
@@ -106,7 +109,6 @@ header {
 }
 
 .osm-tag-cloud{
-  float:right;
   max-width: 300px;
   border:solid 1px black;
   padding: 1em;

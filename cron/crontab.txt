@@ -1,2 +1,3 @@
-*/10 * * * * php /var/tenbreaths/cron/nbn_point_buffer.php
-*/10 * * * * php /var/tenbreaths/cron/osm_reverse_geocode.php
+*/10 * * * * cd /var/tenbreaths/cron && php nbn_point_buffer.php 1> /home/ubuntu/nbn.out 2> /home/ubuntu/nbn.err
+*/10 * * * * cd /var/tenbreaths/cron && php osm_reverse_geocode.php 1> /home/ubuntu/osm_reverse_geocode.out 2> /home/ubuntu/osm_reverse_geocode.err
+*/10 * * * * cd /var/tenbreaths/cron && php osm_nodes.php 1> /home/ubuntu/osm_nodes.out 2> /home/ubuntu/osm_nodes.err

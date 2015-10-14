@@ -24,6 +24,8 @@
     
 ?>
 <div class="tenbreaths-survey-info">
+    <div class="tenbreaths-survey-info-float">
+    
 <?php
     if($photo){
       echo '<img src="/data/'. $photo .'" />';   
@@ -37,6 +39,8 @@
         osm_nodes_tag_cloud($row['raw']);
     }
 ?>
+    </div>
+    
 <h3>Survey Information</h3>
 <p style="color: orange;">This is work in progress!</p>
 <p>
@@ -69,7 +73,7 @@
 </p>
 
 <h3>National Biodiversity Network</h3>
-<p>All occurrence records from within 100m of this point.</p>
+<p>All occurrence records from within 500m of this point.</p>
 <?php
     $response = $mysqli->query("SELECT * FROM au_nbn_point_buffer WHERE submission_id = $submission_id");
     if($response->num_rows == 1){
@@ -104,11 +108,6 @@
             echo $data->taxonCount . ' taxa ' . $data->observationCount . ' records.';
             echo '</p>';
         }
-        
-        //var_dump($render);
-        //var_dump($nbn_data);
-        
-        
         
     }else{
         echo "No nbn found";
