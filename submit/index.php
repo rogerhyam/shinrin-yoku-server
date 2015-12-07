@@ -78,6 +78,19 @@
         
     }
     
+    if(isset($_POST['authentication'])){
+        
+        require_once('authentication.php');
+        
+        $function_name = 'authentication_' . $_POST['authentication'];
+        
+        if(function_exists($function_name)){
+            $function_name();
+        }
+        
+    }
+    
+    
 function get_api_key_id($user_id, $api_key){
     
     global $mysqli;

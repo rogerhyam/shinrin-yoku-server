@@ -43,4 +43,10 @@
     }
        
 
+  function return_json($data){
+    header('Content-type: application/json');
+    echo json_encode($data);
+    exit(0);
+  }
+
 ?>
