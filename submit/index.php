@@ -52,10 +52,16 @@
     
     if(isset($_POST['survey'])){
         
-        $surveyor_json = $_POST['survey'];
-        $survey = json_decode($surveyor_json);
+        $survey_json = $_POST['survey'];
+        $survey = json_decode($survey_json);
+        $survey_key = $survey->id;
         $device_key = $survey->device_key;
         $user_key = $survey->user_key;
+        $latitude = $survey->geolocation->latitude;
+        $longitude = $survey->geolocation->longitude;
+        $accuracy = $survey->geolocation->accuracy;
+        $started = $survey->started; // unix style timestamp number
+        
         $user_id = false;
         
         error_log(print_r($survey, true));
@@ -70,9 +76,12 @@
         // only save the survey if the user has an id
         if($user_id){
     
-            $stmt = $mysqli->prepare("INSERT INTO submissions (survey_key, survey_json, device_key, user_id, created) VALUES (?, ?, ?, ?, now() )");
-            $stmt->bind_param("ssss", $survey_key, $survey_json, $device_key, $user_id);
+            $stmt = $mysqli->prepare("INSERT INTO submissions (survey_key, survey_json, device_key, user_id, started, latitude, longitude, accuracy, created) VALUES (?, ?, ?, ?, ?, ?, ?,?,now() )");
+            $stmt->bind_param("ssssiddd", $survey_key, $survey_json, $device_key, $user_id, $started, $latitude, $longitude, $accuracy);
             $stmt->execute();
+            
+            error_log('started: ' . $started);
+            error_log($stmt->error);
             
             if($stmt->affected_rows != 1){
                 header("HTTP/1.1 500 Internal Error");
