@@ -52,30 +52,42 @@
     
     if(isset($_POST['survey'])){
         
-        $survey =   json_decode($_POST['survey']);
-        $surveyor = json_decode($_POST['surveyor']);
-        $api_key = $_POST['api_key'];
+        $surveyor_json = $_POST['survey'];
+        $survey = json_decode($surveyor_json);
+        $device_key = $survey->device_key;
+        $user_key = $survey->user_key;
+        $user_id = false;
         
         error_log(print_r($survey, true));
-        error_log(print_r($surveyor, true));
+
+        $stmt = $mysqli->prepare("SELECT id FROM users WHERE `key` = ? ");
+        $stmt->bind_param("s", $user_key);
+        $stmt->execute();
+        $stmt->bind_result($user_id);
+        $stmt->fetch();
+        $stmt->close();
         
-        // insert the submission
-        $user_id = get_user_id($surveyor->email, $surveyor->display_name);
-        $api_key_id = get_api_key_id($user_id, $api_key);
-        $survey_id = $survey->id; // fixme - sanitize variable before e.g. 5c102144-4448-4160-8f26-31cd64ac11c6
-        $survey_json = json_encode($survey); // re-encode to help prevent sql injection
-        $surveyor_json = json_encode($surveyor); // re-encode to help prevent sql injection
-        
-        $sql = "INSERT INTO submissions (survey_id, survey_json, surveyor_json, api_key_id, created) VALUES ('$survey_id', '$survey_json', '$surveyor_json', $api_key_id, now() )";
-        
-        if (!$mysqli->query($sql)) {
-            error_log($sql);
-            error_log($mysqli->error);
+        // only save the survey if the user has an id
+        if($user_id){
+    
+            $stmt = $mysqli->prepare("INSERT INTO submissions (survey_key, survey_json, device_key, user_id, created) VALUES (?, ?, ?, ?, now() )");
+            $stmt->bind_param("ssss", $survey_key, $survey_json, $device_key, $user_id);
+            $stmt->execute();
+            
+            if($stmt->affected_rows != 1){
+                header("HTTP/1.1 500 Internal Error");
+                echo "Unable to insert survey.";
+            }else{
+                echo 0;
+            }
+       
+        }else{
+            // there is no account by that name
+            header("HTTP/1.1 403 Forbidden");
+            echo "The user key provided isn't recognised.";
+            exit();
         }
-        $mysqli->query($sql);
-        
-        echo 0;
-        
+    
     }
     
     if(isset($_POST['authentication'])){
@@ -130,77 +142,6 @@ function get_api_key_id($user_id, $api_key){
         return $db_id;
         
     }
-    
-}
-
-
-function get_user_id($email, $display_name){
-    
-     global $mysqli;
-    
-    // have we seen this user before
-    $email = trim($email);
-    $stmt = $mysqli->prepare("SELECT id, email, display_name FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $stmt->store_result();
-    if($stmt->num_rows == 0){
-        
-        error_log('Not Seen user before');
-        
-        // we haven't seen this user before - can we create them
-        if(display_name_available($display_name)){
-            error_log("About to CREATE user");
-            $stmt = $mysqli->prepare("INSERT INTO users (display_name, email, created) VALUES (?, ?, now())");
-            $stmt->bind_param("ss", $display_name, $email);
-            $stmt->execute();
-            if($stmt->affected_rows != 1){
-                error_log($mysqli->error);
-                $stmt->close();
-                return false;
-            }else{
-                $id = $stmt->insert_id;
-                error_log("CREATED user: " . $id);
-                $stmt->close();
-                return $id;
-            }
-           
-        }else{
-            display_name_clash($display_name);
-            return false;
-        }
-        
-    }else{
-        
-        // we have seen them before        
-        $stmt->bind_result($db_id, $db_email, $db_display_name);
-        $stmt->fetch();
-        
-        // have they changed their user name?
-        if($db_display_name != $display_name){
-            
-            if(display_name_available($display_name)){
-                // OK so update their display_name and return the id
-                error_log("About to UPDATE user");
-                $stmt = $mysqli->prepare("UPDATE users SET display_name = ? WHERE id = ?");
-                $stmt->bind_param("si", $display_name, $db_id);
-                $stmt->execute();
-                error_log("UPDATEd  user");
-                return $db_id;
-            }else{
-                // bad stuff so give up
-                display_name_clash($display_name);
-                return false;
-            }
-            
-        }else{
-            // nothing changed so return their id
-            return $db_id; 
-        }
-        
-    }
-    
-    $stmt->close();
     
 }
 

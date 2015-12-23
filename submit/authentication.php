@@ -83,7 +83,6 @@ function authentication_login(){
     
     // look in the db
     $stmt = $mysqli->prepare("SELECT `display_name`, `key` FROM users WHERE email = ? AND password = ?");
-    error_log($mysqli->error);
     $stmt->bind_param("ss", $email, $password_hash);
     $stmt->execute();
     $stmt->store_result();
