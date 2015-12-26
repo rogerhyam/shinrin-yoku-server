@@ -7,10 +7,10 @@ include('utils.php');
 // otherwise work through the next 10 that don't have results
 if(isset($_GET['survey'])){
     
-    $survey_id = $_GET['survey'];
-    if(count($survey_id) > 50) exit;
+    $survey_key = $_GET['survey'];
+    if(count($survey_key) > 50) exit;
     
-    $sql = "SELECT survey_json, id as submission_id FROM submissions WHERE survey_id = '$survey_id'";
+    $sql = "SELECT survey_json, id as submission_id FROM submissions WHERE survey_key = '$survey_key'";
     $response = $mysqli->query($sql);
     $row = $response->fetch_assoc();
     $survey = json_decode($row['survey_json']);

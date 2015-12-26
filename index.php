@@ -19,18 +19,23 @@
   
   // have we been passed a survey id?
   // if so override the zoom and center
-  $survey_id = false;
+  $survey_key = false;
   $fb_tags = array();
   $twitter_tags = array();
   if(isset($_GET['survey']) && strlen($_GET['survey']) < 40 && strpos($_GET['survey'], ' ') === false ){
     // e.g. 2710f20e-6511-4110-9030-d67033c632a0
     
-    $survey_id = $_GET['survey'];
-    $sql = "SELECT s.survey_json, s.photo, u.display_name 
-      FROM submissions as s JOIN api_keys as a ON s.api_key_id = a.id
-      JOIN users as u ON a.user_id = u.id
-      WHERE s.survey_id = '$survey_id'";
+    $survey_key = $_GET['survey'];
+    $sql = "
+      SELECT s.survey_json, s.photo, u.display_name 
+      FROM submissions as s
+      JOIN users as u ON s.user_id = u.id
+      WHERE s.survey_key = '$survey_key'
+      ";
+      
+    error_log($sql);
     $response = $mysqli->query($sql);
+    error_log($mysqli->error);
     
     if($response->num_rows){
       $row = $response->fetch_assoc();
@@ -48,7 +53,7 @@
 
       
       // set up the facebook meta tagging so fb can crawl the page
-      $fb_tags['og:url']  = $site_url . 'survey-' . $survey_id;
+      $fb_tags['og:url']  = $site_url . 'survey-' . $survey_key;
       $fb_tags['og:type']  = 'place';
       $fb_tags['og:site_name'] = 'Ten Breaths Map';
       $fb_tags['place:location:latitude'] = $survey->geolocation->latitude;
@@ -76,7 +81,7 @@
   
     } // end found row
     
-  }// end have survey_id
+  }// end have survey_key
   
   // have we been passed a center point and zoom level - possibly for "nearby" functionality
   if(isset($_GET['center'])){
@@ -152,7 +157,7 @@
           <?php }else{ ?>
               data-tb-zoom="<?php echo 10; ?>"
           <?php } ?>
-          data-tb-survey="<?php echo $survey_id; ?>"
+          data-tb-survey="<?php echo $survey_key; ?>"
           ></div>
     </div>
     <div id="popup" class="ol-popup" data-tenbreaths-base-url="<?php echo $site_url ?>">

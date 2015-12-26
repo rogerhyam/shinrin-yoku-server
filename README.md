@@ -18,3 +18,8 @@ Twitter integration strategy - todo
 
 * Similar to FB but with twitter cards
 * https://dev.twitter.com/cards/types/summary
+* 
+
+## Next
+
+* add hidden to submissions table

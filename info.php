@@ -3,14 +3,14 @@
     require_once('config.php');
 
     if(isset($_GET['survey'])){
-        $survey_id = $_GET['survey'];
-        if(strlen($survey_id) > 40) exit;
+        $survey_key = $_GET['survey'];
+        if(strlen($survey_key) > 40) exit;
     }else{
         echo 'No survey id specified!';
         exit;
     }
     
-    $response = $mysqli->query("SELECT * FROM submissions WHERE survey_id = '$survey_id'");
+    $response = $mysqli->query("SELECT * FROM submissions WHERE survey_key = '$survey_key'");
     if($response->num_rows == 1){
         $row = $response->fetch_assoc();
         $survey = json_decode($row['survey_json']);
@@ -18,7 +18,7 @@
         $submission_id = $row['id'];
         // fixme: we could get the surveyor and modified info here
     }else{
-        echo "Survey $survey_id not found";
+        echo "Survey $survey_key not found";
         exit;
     }
     

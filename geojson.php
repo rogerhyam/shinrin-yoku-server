@@ -1,31 +1,31 @@
 <?php
   require_once('config.php');
 
-    $sql = "SELECT s.*, u.display_name as username, u.id as user_id FROM submissions as s
-JOIN api_keys as api on s.api_key_id = api.id
-JOIN users as u on api.user_id = u.id
-WHERE ft_row_id IS NULL";
-
-  // basic filter is to restrict to usernam
-  if(isset($_GET['username']) && strlen($_GET['username']) < 40){
-    $sql .= " AND u.display_name = '" . $_GET['username'] ."'";
-  }
+    $sql = "
+      SELECT
+          s.*,
+          u.display_name as username,
+          u.id as user_id
+      FROM 
+          submissions as s
+      JOIN
+          users as u on s.user_id = u.id
+      ";
 
   $response = $mysqli->query($sql);
   $features = array();
   while($row = $response->fetch_assoc()){
       
       $submission_id = $row['id'];
-      $survey_id = $row['survey_id'];
+      $survey_key = $row['survey_key'];
       $survey = json_decode($row['survey_json']);
-      $surveyor = json_decode($row['surveyor_json']);
   
       if(!isset($survey->geolocation->longitude) || !isset($survey->geolocation->latitude) ) continue;
       
       // create a point feature
       $feature = new stdClass();
       $features[] = $feature;
-      $feature->id = $survey_id;
+      $feature->id = $survey_key;
       $feature->type = "Feature";
       $feature->geometry = new stdClass();
       $feature->geometry->type = "Point";

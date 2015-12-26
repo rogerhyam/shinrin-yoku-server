@@ -16,13 +16,13 @@
     if( isset($_FILES["file"]) ){
 
         // load the survey by the id of the filename
-        $survey_id = preg_replace('/\\.[^.\\s]{3,4}$/', '', $_FILES["file"]["name"]);
-        error_log($survey_id);
-        $response = $mysqli->query("SELECT created FROM submissions WHERE survey_id = '$survey_id'");
+        $survey_key = preg_replace('/\\.[^.\\s]{3,4}$/', '', $_FILES["file"]["name"]);
+        error_log($survey_key);
+        $response = $mysqli->query("SELECT * FROM submissions WHERE survey_key = '$survey_key'");
         
         // fail if we can't find the survey
         if($response->num_rows < 1){
-            error_log("Can't find survey for $survey_id");
+            error_log("Can't find survey for $survey_key");
             header("HTTP/1.1 409 Conflict");
             echo "Sorry. Failed to add photo to survey. Can't find survey the survey in the db.";
             exit();
@@ -39,7 +39,14 @@
         
         if(move_uploaded_file($_FILES["file"]["tmp_name"], $dir_path . '/' . $_FILES["file"]["name"])){
             $photo_path = $date_path . '/' . $_FILES["file"]["name"]; // stored in db
-            $mysqli->query("UPDATE submissions SET photo = '$photo_path' WHERE survey_id = '$survey_id'");
+            $mysqli->query("UPDATE submissions SET photo = '$photo_path' WHERE survey_key = '$survey_key'");
+        }
+        
+        if($response->num_rows < 1){
+            error_log("Failed to update survey for photo. Key: $survey_key");
+            header("HTTP/1.1 500 Internal Error");
+            echo "Sorry. Failed to add photo to survey.";
+            exit();
         }
         
         // fixme: check file size
@@ -57,6 +64,7 @@
         $survey_key = $survey->id;
         $device_key = $survey->device_key;
         $user_key = $survey->user_key;
+        $public = $survey->public;
         $latitude = $survey->geolocation->latitude;
         $longitude = $survey->geolocation->longitude;
         $accuracy = $survey->geolocation->accuracy;
@@ -76,8 +84,10 @@
         // only save the survey if the user has an id
         if($user_id){
     
-            $stmt = $mysqli->prepare("INSERT INTO submissions (survey_key, survey_json, device_key, user_id, started, latitude, longitude, accuracy, created) VALUES (?, ?, ?, ?, ?, ?, ?,?,now() )");
-            $stmt->bind_param("ssssiddd", $survey_key, $survey_json, $device_key, $user_id, $started, $latitude, $longitude, $accuracy);
+            $stmt = $mysqli->prepare("INSERT INTO submissions 
+                                            (survey_key, survey_json, device_key, user_id, public, started, latitude, longitude, accuracy, created)
+                                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,now() )");
+            $stmt->bind_param("ssssiiddd", $survey_key, $survey_json, $device_key, $user_id, $public, $started, $latitude, $longitude, $accuracy);
             $stmt->execute();
             
             error_log('started: ' . $started);
