@@ -10,22 +10,38 @@ function authentication_signup(){
     
     // what are we interested in
     $display_name = @$_POST['display_name'];
-    $email = @$_POST['email'];
+    $email = trim(@$_POST['email']);
     $password = @$_POST['password'];
     
     // been passed reasonable values
-
-    
     // check email -- looks OK
     if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
         $errors[] = "The email is invalid";
     }
     
     // is email already registered
+    $stmt = $mysqli->prepare("SELECT id FROM `users` WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    error_log($mysqli->error);
+    $stmt->store_result();
+    if($stmt->num_rows > 0){
+        $errors[] = "This email address is already registered. Have you forgotten your password?";
+    }
     
     // does the username look OK?
     if(!$display_name || strlen($display_name) < 6){
         $errors[] = "The display Name must be more than 5 characters long.";
+    }
+    
+    // is the username taken
+    $stmt = $mysqli->prepare("SELECT id FROM `users` WHERE display_name = ?");
+    $stmt->bind_param("s", $display_name);
+    $stmt->execute();
+    error_log($mysqli->error);
+    $stmt->store_result();
+    if($stmt->num_rows > 0){
+        $errors[] = "The display name '$display_name' is taken. Please choose another.";
     }
     
     // does the password look OK?
@@ -55,7 +71,7 @@ function authentication_signup(){
         }
     }
     
-    // return some AJAX 
+    // return some json 
     if(count($errors) > 0){
         $out['success'] = false;
         $out['errors'] = $errors;
