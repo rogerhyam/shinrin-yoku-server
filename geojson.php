@@ -36,6 +36,8 @@
       
       $feature->properties->title = $row['username'] . " on " . getDateStringFromSurvey($survey);
       
+      // fixme: include the user key and the hidden or not identifier
+      
       $desc = '<div>';
       if($row['photo']){
         
@@ -49,7 +51,7 @@
         $base_url = $protocol . $_SERVER['SERVER_NAME'] . dirname($_SERVER['PHP_SELF']) . 'data/';
         $image_url = $base_url . $row['photo'];
 
-        $desc .= "<img src=\"$image_url\"  />";
+        $desc .= "<img src=\"$image_url\" />";
 
       }
       

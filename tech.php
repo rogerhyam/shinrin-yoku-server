@@ -12,9 +12,9 @@
   $site_url = $protocol . $_SERVER['SERVER_NAME'] . '/';
   
   // default values for center and zoom
-  $center_lon = 0;
-  $center_lat = 0;
-  $zoom = 0;
+  $center_lon = -3.210008;
+  $center_lat = 55.964747;
+  $zoom = false;
   $preserve_viewport = 'false';
   
   // have we been passed a survey id?
@@ -32,12 +32,12 @@
       JOIN users as u ON s.user_id = u.id
       WHERE s.survey_key = '$survey_key'
       ";
-    
+      
+    error_log($sql);
     $response = $mysqli->query($sql);
     error_log($mysqli->error);
     
     if($response->num_rows){
-      
       $row = $response->fetch_assoc();
       $survey = json_decode($row['survey_json']);
       
@@ -45,12 +45,12 @@
       if(isset($survey->geolocation->longitude) && isset($survey->geolocation->latitude)){
         $center_lon = $survey->geolocation->longitude;
         $center_lat = $survey->geolocation->latitude;
-        $zoom = 15;
         $preserve_viewport = 'true';
       }
       
       // social media here we come
       $social_title = 'A Ten Breaths Place by ' . $row['display_name'] . ' on ' . getDateStringFromSurvey($survey);
+
       
       // set up the facebook meta tagging so fb can crawl the page
       $fb_tags['og:url']  = $site_url . 'survey-' . $survey_key;
@@ -114,7 +114,8 @@
     
     <script src="js/jquery-1.11.3.min.js" type="text/javascript"></script>
     <script src="style/cssmenu/script.js" type="text/javascript"></script>
-    <script src="js/openlayers-3.12.1/ol.js" type="text/javascript"></script>
+    <script src="js/openlayers-3.9.0/ol.js" type="text/javascript"></script>
+    <script src="js/mapsconfig.js" type="text/javascript"></script>
     <script src="js/main.js" type="text/javascript"></script>
     
     
@@ -124,7 +125,22 @@
       <div id='cssmenu'>
           <ul>
              <li><a href="/">Ten Breaths</a></li>
-             <li><a href='#' onclick="mapsConfig.zoomToCurrentLocation()" >Nearby</a></li>
+             <li class='active'><a href='#'>Maps</a>
+                <ul id="maps-sub-menu">
+                   <li><a href='#'>Edinburgh</a></li>
+                   <li><a href='#'>Scotland</a></li>
+                </ul>
+             </li>
+             <li><a href='#'>Layers</a>
+                <ul id="layers-sub-menu" >
+                   <li><a href='#'>Base Layer</a>
+                     <ul id="base-layers-sub-menu" >
+                     </ul>
+                   </li>
+                   <li><a href='#'>Edinburgh</a></li>
+                   <li><a href='#'>Scotland</a></li>
+                </ul>
+                </li>
              <li><a href='#' onclick="mapsConfig.showPopupPage('about-page')" >About</a></li>
              <li><a href='#' onclick="mapsConfig.showPopupPage('contact-page')" >Contact</a></li>
           </ul>

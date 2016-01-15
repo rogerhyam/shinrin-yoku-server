@@ -1,7 +1,6 @@
 /*
     Here we define the different combinations of layers,
     centres and zoom levels that people can pick from
-    - more details are added by other scripts
 */
 
 /* global ol */
