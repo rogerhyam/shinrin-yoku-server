@@ -119,6 +119,10 @@ $( document ).ready(function() {
           // user in the local storage or if it is a hidden spot
           
           var size = feature.get('features').length;
+          if(size == 1){
+            console.log(feature.get('features')[0].get('user_key'));
+          }
+          
           var style = styleCache[size];
           if (!style) {
             style = [new ol.style.Style({

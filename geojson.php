@@ -5,7 +5,8 @@
       SELECT
           s.*,
           u.display_name as username,
-          u.id as user_id
+          u.id as user_id,
+          u.key as user_key
       FROM 
           submissions as s
       JOIN
@@ -35,8 +36,8 @@
       $feature->properties = new stdClass();
       
       $feature->properties->title = $row['username'] . " on " . getDateStringFromSurvey($survey);
-      
-      // fixme: include the user key and the hidden or not identifier
+      $feature->properties->user_key = $row['user_key'];
+      $feature->properties->public_visible = $row['public'];
       
       $desc = '<div>';
       if($row['photo']){
