@@ -68,14 +68,17 @@ function authentication_signup(){
         $errors[] = "The password must be more than 6 characters long '$password' .";
     }
     
+    // they will need an access token
+    $access_token = authentication_generate_access_token();
+    
     // if no errors at this stage try and create users
     if(count($errors) == 0){
         // create the user row
         $user_key = uniqid('USER:', true);
         $password_hash = md5($password);
-        $stmt = $mysqli->prepare("INSERT INTO users (`display_name`, `email`, `password`, `key`, `created`) VALUES (?, ?, ?, ?, now())");
+        $stmt = $mysqli->prepare("INSERT INTO users (`display_name`, `email`, `password`, `key`, `access_token`, `created`) VALUES (?, ?, ?, ?,?, now())");
         error_log($mysqli->error);
-        $stmt->bind_param("ssss", $display_name, $email, $password_hash, $user_key);
+        $stmt->bind_param("sssss", $display_name, $email, $password_hash, $user_key, $access_token);
         $stmt->execute();
         if($stmt->affected_rows != 1){
             error_log($mysqli->error);
@@ -86,6 +89,7 @@ function authentication_signup(){
             error_log("CREATED user: " . $id);
             $out['userKey'] = $user_key;
             $out['displayName'] = $display_name;
+            $out['accessToken'] = $access_token;
             $stmt->close();
         }
     }
@@ -132,7 +136,7 @@ function authentication_login(){
         // create an access token they can use to view
         // their own records via their phone
         // make it random and URL safe 
-        $access_token = str_replace( '%', '', urlencode(openssl_random_pseudo_bytes(20)));
+        $access_token = authentication_generate_access_token();
         
         // save it in the db
         $stmt2 = $mysqli->prepare("UPDATE users SET access_token = ? WHERE `key` = ?");
@@ -149,6 +153,10 @@ function authentication_login(){
     
     return_json($out);
     
+}
+
+function authentication_generate_access_token(){
+    return str_replace( '%', '', urlencode(openssl_random_pseudo_bytes(20)));
 }
 
 ?>
