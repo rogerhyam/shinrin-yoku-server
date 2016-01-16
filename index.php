@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <?php
   require_once('config.php');
+  
   header("Access-Control-Allow-Origin: *");
+  
+  // log us in if we are passing an access token
+  if(isset($_GET['t'])){
+    require_once('submit/authentication.php');
+    authentication_by_token($_GET['t']);
+  }
   
   // where are we
   if( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ){
@@ -15,8 +22,7 @@
   $center_lon = 0;
   $center_lat = 0;
   $zoom = 0;
-  $preserve_viewport = 'false';
-  
+ 
   // have we been passed a survey id?
   // if so override the zoom and center
   $survey_key = false;
@@ -46,7 +52,6 @@
         $center_lon = $survey->geolocation->longitude;
         $center_lat = $survey->geolocation->latitude;
         $zoom = 15;
-        $preserve_viewport = 'true';
       }
       
       // social media here we come
@@ -124,9 +129,8 @@
       <div id='cssmenu'>
           <ul>
              <li><a href="/">Ten Breaths</a></li>
-             <li><a href='#' onclick="mapsConfig.zoomToCurrentLocation()" >Nearby</a></li>
+             <li><a id="menu-nearby-link" href='#' onclick="mapsConfig.zoomToCurrentLocation()" >Nearby</a></li>
              <li><a href='#' onclick="mapsConfig.showPopupPage('about-page')" >About</a></li>
-             <li><a href='#' onclick="mapsConfig.showPopupPage('contact-page')" >Contact</a></li>
           </ul>
       </div>
     </header>
@@ -141,7 +145,10 @@
           <?php }else{ ?>
               data-tb-zoom="<?php echo 10; ?>"
           <?php } ?>
+          
           data-tb-survey="<?php echo $survey_key; ?>"
+          data-tb-user-key="<?php echo isset($_SESSION['user_key']) ? $_SESSION['user_key'] : ""; ?>"
+          
           ></div>
     </div>
     <div id="popup" class="ol-popup" data-tenbreaths-base-url="<?php echo $site_url ?>">
@@ -149,8 +156,8 @@
       <div id="popup-content"></div>
       <button id="popup-fb-share" >FaceBook</button>
       <button id="popup-twitter-share" >Twitter</button>
-      <button id="popup-link" >Link</button>
-      <button id="popup-info" >Info</button>
+      <button id="popup-mail" >Mail</button>
+      <button id="popup-google-maps" >Google Earth</button>
     </div>
     
     <!-- About page -->
@@ -176,6 +183,9 @@
       <p>We are still in the "playing" phase where we test out different ideas and technologies to see what is feasible.
       This is way before a Beta phase or even and Alpha phase!</p>
       
+      <h2>Contact</h2>
+      <p>Any questions or comments? I'd love to hear from you. Roger Hyam <a href="mailto:r.hyam@rbge.org.uk">r.hyam@rbge.org.uk</a></p>
+      
       <h3>Thanks</h3>
       <p>The data data layers presented on the map that start with SNH are pulled live from the 
       <a href="http://www.snh.gov.uk/publications-data-and-research/snhi-information-service/">Scottish Natural Heritage Information Service</a> under an 
@@ -183,22 +193,6 @@
       <p>The book <a href="http://www.amazon.co.uk/dp/1937006395">Ten Breaths To Happiness: Touching Life in Its Fullness </a> by Glen Schneider was 
       helped to clarify the mindfulness technique to use and provides a good background reading.</p>
       
-    </div>
-    
-    <!-- Contact page -->
-    <div id="contact-page" class="popup-page">
-      <a href="#" class="popup-page-closer">close</a>
-      <h2>Contact Us</h2>
-      <p>Any questions or comments? I'd love to hear from you. Roger Hyam <a href="mailto:r.hyam@rbge.org.uk">r.hyam@rbge.org.uk</a></p>
-    </div>
-    
-    <!-- Contact page -->
-    <div id="info-page" class="popup-page">
-      <a href="#" class="popup-page-closer">close</a>
-      <h2>Survey Information</h2>
-      <div class="content">
-        <p>This will be replaced by details of the survey point.</p>
-      </div>
     </div>
     
   </body>

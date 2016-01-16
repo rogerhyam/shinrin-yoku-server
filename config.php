@@ -2,6 +2,12 @@
   date_default_timezone_set('UTC');
   error_reporting(E_ALL);
   ini_set('display_errors', 1);
+  
+  // sessions are initiated on access tokens
+  // so we want them to expire when the browser
+  // is closed - kind of like basic auth.
+  session_set_cookie_params(0);
+  session_start();
 
     $db_host = 'localhost';
     $db_database = 'tenbreaths';

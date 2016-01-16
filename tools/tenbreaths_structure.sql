@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 26, 2015 at 12:16 PM
+-- Generation Time: Jan 16, 2016 at 03:54 PM
 -- Server version: 5.5.44-0ubuntu0.14.04.1
 -- PHP Version: 5.5.9-1ubuntu4.13
 
@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS `submissions` (
   `accuracy` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `survey_ids_unique` (`survey_key`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=266 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=268 ;
 
 -- --------------------------------------------------------
 
@@ -123,10 +123,11 @@ CREATE TABLE IF NOT EXISTS `users` (
   `display_name` varchar(50) NOT NULL,
   `password` varchar(50) DEFAULT NULL,
   `key` varchar(50) DEFAULT NULL,
+  `access_token` varchar(100) DEFAULT NULL,
   `created` timestamp NULL DEFAULT NULL,
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=15 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

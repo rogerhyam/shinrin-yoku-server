@@ -1,6 +1,25 @@
 <?php
 
-require_once('../config.php');
+function authentication_by_token($token){
+    
+    global $mysqli;
+    
+    // if the token matches one issued to a user then
+    // add that user's key to the session to signify 
+    // they are logged in to the site.
+    $stmt = $mysqli->prepare('SELECT  display_name, `key` FROM users WHERE access_token = ?');
+    $stmt->bind_param("s", $token);
+    $stmt->execute();
+    $stmt->store_result();
+    if($stmt->num_rows > 0){
+        $stmt->bind_result($_SESSION['display_name'], $_SESSION['user_key']);
+        $stmt->fetch();
+        return $_SESSION['user_key'];
+    }else{
+        return null;
+    }
+    
+}
 
 function authentication_signup(){
     
@@ -109,6 +128,21 @@ function authentication_login(){
         $out['success'] = true;
         $out['displayName'] = $display_name;
         $out['userKey'] = $user_key;
+        
+        // create an access token they can use to view
+        // their own records via their phone
+        // make it random and URL safe 
+        $access_token = str_replace( '%', '', urlencode(openssl_random_pseudo_bytes(20)));
+        
+        // save it in the db
+        $stmt2 = $mysqli->prepare("UPDATE users SET access_token = ? WHERE `key` = ?");
+        echo $mysqli->error;
+        $stmt2->bind_param('ss', $access_token, $user_key);
+        $stmt2->execute();
+        
+        // pass it back for them to use
+        $out['accessToken'] = $access_token;
+        
     }else{
         $out['success'] = false;
     }

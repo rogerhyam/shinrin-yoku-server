@@ -112,38 +112,80 @@ $( document ).ready(function() {
         source: clusterSource,
         style: function(feature, resolution) {
           
-          // console.log(feature.get("features")[0].get('title'));
-          // console.log(feature.get('title'));
-          
-          // fixme Change the colour depending on if this is the 
-          // user in the local storage or if it is a hidden spot
-          
-          var size = feature.get('features').length;
-          if(size == 1){
-            console.log(feature.get('features')[0].get('user_key'));
+          // if the cluster contains features that belong to the 
+          // selected user then they are highlighted color
+          var containsUserPoint = false;
+          for(var i = 0; i < feature.get("features").length; i++){
+            var f = feature.get("features")[i];
+            if(f.get('user_key') == $('#map-canvas').data('tb-user-key')){
+                containsUserPoint = true;
+                break;
+            }
           }
           
-          var style = styleCache[size];
-          if (!style) {
-            style = [new ol.style.Style({
-              image: new ol.style.Circle({
-                radius: 12,
+          var strokeColor = '#0b222d'; // dark blue
+          var fillColor =  '#3399CC'; // blue
+          if(containsUserPoint){
+            strokeColor = '#492312'; // dark orange
+            fillColor = '#cc6133'; // orange
+          }
+          
+          // if the cluster is exclusively private then the
+          // shape is highlight
+          var notPublic = true;
+          for(var i = 0; i < feature.get("features").length; i++){
+            var f = feature.get("features")[i];
+            if(f.get('public_visible') == 1){
+                notPublic = false;
+                break;
+            }
+          }
+          
+          var featureImage;
+          if(notPublic){
+             featureImage = new ol.style.RegularShape({
+                  fill: new ol.style.Fill({
+                  color: fillColor
+                }),
+                  stroke:  new ol.style.Stroke({
+                  color: strokeColor
+                }),
+                  points: 4,
+                  radius: 10,
+                  angle: Math.PI / 4
+              });
+          }else{
+            featureImage = new ol.style.Circle({
+                radius: 10,
                 stroke: new ol.style.Stroke({
-                  color: '#fff'
+                  color: strokeColor
                 }),
                 fill: new ol.style.Fill({
-                  color: '#3399CC'
+                  color: fillColor
                 })
-              }),
+              });
+          }
+          
+          
+          var size = feature.get('features').length;
+          
+          var styleId = size + '-' + containsUserPoint + '-' + notPublic;
+          var style = styleCache[styleId];
+          if (!style) {
+            style = [new ol.style.Style({
+              image: featureImage,
               text: new ol.style.Text({
                 text: size.toString(),
                 fill: new ol.style.Fill({
                   color: '#fff'
                 })
               })
+              
             })];
-            styleCache[size] = style;
-          }
+      
+            styleCache[styleId] = style;
+          
+          } // end no style
           return style;
         }
     });
@@ -244,8 +286,6 @@ $( document ).ready(function() {
     
     var showPopup = function(feature){
       
-      console.log(feature);
-      
       var html = "<strong>" + feature.get('title') + "</strong>";
         
         html += "<hr/>";
@@ -260,6 +300,14 @@ $( document ).ready(function() {
         // show the overlay
         var coordinate = feature.getGeometry().getCoordinates();
         overlay.setPosition(coordinate);
+        
+        
+        // also set the location data so we can launch a google maps link
+        var longLat = ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326');
+        $('#popup').data('longitude', longLat[0]);
+        $('#popup').data('latitude', longLat[1]);
+        $('#popup').data('zoom', mapsConfig.map.getView().getZoom());
+
     };
     
     // show fb share window
@@ -282,16 +330,28 @@ $( document ).ready(function() {
       );
     });
     
-    // link goes to the href
-    $('#popup-link').on('click',function(){
-      window.location.href = $('#popup').data('href');
+    // link creates mailto
+    $('#popup-mail').on('click',function(){
+      window.location.href = 'mailto:?subject=Ten Breaths Map&body=' + $('#popup').data('href');
     });
     
-    // link goes to the href
-    $('#popup-info').on('click',function(){
-      $('#info-page .content').load('info.php?survey=' + $('#popup').data('survey_id'));
-      mapsConfig.showPopupPage('info-page');
+    // link goes to google maps
+    $('#popup-google-maps').on('click',function(){
+      
+      // http://maps.google.com/maps?&z={INSERT_MAP_ZOOM}&mrt={INSERT_TYPE_OF_SEARCH}&t={INSERT_MAP_TYPE}&q={INSERT_MAP_LAT_COORDINATES}+{INSERT_MAP_LONG_COORDINATES}
+
+      var gmapUri = 'http://maps.google.com/maps'
+        + '?z=' +  $('#popup').data('zoom')
+        + '&mrt=yp'
+        + '&t=k'
+        + '&q=' +  $('#popup').data('latitude')
+        + '+' + $('#popup').data('longitude');
+      
+        window.open(gmapUri, '_blank');
+        
     });
+    
+    
    
 }); // end doc ready
 
@@ -301,9 +361,12 @@ $( document ).ready(function() {
 
 mapsConfig.zoomToCurrentLocation = function(){
   
-    // not having much luck - try their current location
+        $('.popup-page').hide('slow'); // hide any open pages
+        
         if(navigator.geolocation){
-          console.log('calling for pos');
+          
+          $('#menu-nearby-link').html("Bear with...");
+          
           navigator.geolocation.getCurrentPosition(
             function(position){
               console.log(position);
@@ -329,8 +392,11 @@ mapsConfig.zoomToCurrentLocation = function(){
               mapsConfig.map.getView().setCenter(center);
               mapsConfig.map.getView().setZoom(16);
             
+              $('#menu-nearby-link').html("Nearby");
+            
             },
             function(error){
+              $('#menu-nearby-link').html("Nearby");
               alert("Sorry. Couldn't obtain your position. Error code: " + error.code);
             }
             );

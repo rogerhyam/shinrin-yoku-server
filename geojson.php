@@ -1,5 +1,18 @@
 <?php
   require_once('config.php');
+  
+  // look to the session then access token for the user_key.
+  if(isset($_SESSION['user_key'])){
+    $user_key = $_SESSION['user_key'];
+  }elseif(isset($_GET['t'])){
+    require_once('submit/authentication.php');
+    $user_key = authentication_by_token($_GET['t']);
+  }else{
+    $user_key = null;
+  }
+  
+  // If it isn't there leave out all non-public records
+  // If it is there then include the hidden ones for that user.
 
     $sql = "
       SELECT
@@ -11,7 +24,13 @@
           submissions as s
       JOIN
           users as u on s.user_id = u.id
+      WHERE
+        s.`public` = 1
       ";
+      
+  if($user_key){
+    $sql .= " OR ( s.public = 0 AND u.key = '$user_key' )";
+  }
 
   $response = $mysqli->query($sql);
   $features = array();
