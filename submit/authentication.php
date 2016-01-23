@@ -140,7 +140,6 @@ function authentication_login(){
         
         // save it in the db
         $stmt2 = $mysqli->prepare("UPDATE users SET access_token = ? WHERE `key` = ?");
-        echo $mysqli->error;
         $stmt2->bind_param('ss', $access_token, $user_key);
         $stmt2->execute();
         
@@ -148,7 +147,7 @@ function authentication_login(){
         $out['accessToken'] = $access_token;
         
         // create an access_link
-        $access_link = get_server_uri() + '?t=' + $access_token;
+        $access_link = get_server_uri() . '?t=' . $access_token;
         
         // queue an email to send them the new access_token
         ob_start();
@@ -164,6 +163,51 @@ function authentication_login(){
     
     return_json($out);
     
+}
+
+function authentication_forgot(){
+    
+    global $mysqli;
+    $out = array();
+
+    $email = @$_POST['email'];
+    $new_password = @$_POST['password'];
+    
+    // see if there is an entry with that email
+    $stmt = $mysqli->prepare("SELECT id, email, display_name FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->store_result();
+    
+    if($stmt->num_rows == 1){
+        
+        $stmt->bind_result($user_id, $email, $display_name);
+        $stmt->fetch();
+        // if there is set the MD5 of the new password
+        $password_hash = md5($new_password);
+        $validation_token = authentication_generate_access_token();
+        
+        $stmt2 = $mysqli->prepare("UPDATE users SET validation_token = ? WHERE `id` = ?");
+        $stmt2->bind_param('si', $validation_token, $user_id);
+        $stmt2->execute();
+
+        // send an email to ask for email validation again.
+        $activate_password_link = get_server_uri() . 'activate_password.php?t=' . $validation_token;
+        
+        ob_start();
+        include('../email_templates/new_password.php');
+        $body = ob_get_contents();
+        ob_end_clean();
+        enqueue_email('new_password', $email, $display_name, 'Ten Breaths Map: New Password', $body);
+        
+        $out['success'] = true;
+
+    }else{
+        $out['success'] = false;
+    }
+    
+    return_json($out);
+
 }
 
 function authentication_generate_access_token(){

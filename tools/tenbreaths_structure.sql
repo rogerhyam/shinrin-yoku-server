@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 16, 2016 at 03:54 PM
+-- Generation Time: Jan 23, 2016 at 07:01 PM
 -- Server version: 5.5.44-0ubuntu0.14.04.1
 -- PHP Version: 5.5.9-1ubuntu4.13
 
@@ -89,6 +89,27 @@ CREATE TABLE IF NOT EXISTS `au_osm_reverse_geocode` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `email_queue`
+--
+
+CREATE TABLE IF NOT EXISTS `email_queue` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `kind` varchar(32) DEFAULT NULL COMMENT 'e.g. login confirm or registration ',
+  `created` timestamp NULL DEFAULT NULL COMMENT 'time row was created',
+  `attempt` timestamp NULL DEFAULT NULL COMMENT 'time last attempt to send',
+  `success` timestamp NULL DEFAULT NULL COMMENT 'time successfully sent',
+  `attempt_count` int(11) NOT NULL DEFAULT '0' COMMENT 'number of attempts to send',
+  `error` varchar(255) NOT NULL COMMENT 'last error reported',
+  `to_address` varchar(100) DEFAULT NULL,
+  `to_name` varchar(50) DEFAULT NULL,
+  `subject` varchar(255) DEFAULT NULL COMMENT 'email subject',
+  `body` text NOT NULL COMMENT 'email body',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=25 ;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `submissions`
 --
 
@@ -109,7 +130,7 @@ CREATE TABLE IF NOT EXISTS `submissions` (
   `accuracy` float NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `survey_ids_unique` (`survey_key`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=268 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=270 ;
 
 -- --------------------------------------------------------
 
@@ -122,6 +143,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   `email` varchar(50) NOT NULL,
   `display_name` varchar(50) NOT NULL,
   `password` varchar(50) DEFAULT NULL,
+  `password_new` varchar(50) DEFAULT NULL COMMENT 'new password waiting for validation by email',
+  `validation_token` varchar(100) DEFAULT NULL COMMENT 'token sent to validate email and new password',
+  `validated` tinyint(1) DEFAULT NULL COMMENT 'email has been validated',
   `key` varchar(50) DEFAULT NULL,
   `access_token` varchar(100) DEFAULT NULL,
   `created` timestamp NULL DEFAULT NULL,
