@@ -2,6 +2,10 @@
   date_default_timezone_set('UTC');
   error_reporting(E_ALL);
   ini_set('display_errors', 1);
+
+  // load the composer stuff  
+  require 'vendor/autoload.php';
+
   
   // sessions are initiated on access tokens
   // so we want them to expire when the browser
@@ -54,5 +58,41 @@
     echo json_encode($data);
     exit(0);
   }
+  
+  /*
+   * Adds an email to the email_queue table
+   * a cron script will then send it
+   *
+   */
+  function enqueue_email($kind, $to_address, $to_name, $subject, $body){
+    
+    global $mysqli;
+    
+    $stmt = $mysqli->prepare('INSERT INTO email_queue (kind, to_address, to_name, subject, body, created) VALUES (?,?,?,?,?, now())');
+    echo $mysqli->error;
+    $stmt->bind_param("sssss", $kind, $to_address, $to_name, $subject, $body );
+    
+    $stmt->execute();
+    if($mysqli->error){
+      error_log($mysqli->error);
+      return false;
+    }else{
+      return true;
+    }
+    
+    
+    
+  }
+  
+  // we need to know where we are
+  function get_server_uri(){
+      if( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ){
+        $protocol = 'https://';
+      }else{
+        $protocol = 'http://';
+      }
+      return $protocol . $_SERVER['SERVER_NAME'] . '/';
+  }
+
 
 ?>

@@ -121,13 +121,13 @@ function authentication_login(){
     error_log($password_hash);
     
     // look in the db
-    $stmt = $mysqli->prepare("SELECT `display_name`, `key` FROM users WHERE email = ? AND password = ?");
+    $stmt = $mysqli->prepare("SELECT `display_name`, `key`, email FROM users WHERE email = ? AND password = ?");
     $stmt->bind_param("ss", $email, $password_hash);
     $stmt->execute();
     $stmt->store_result();
     
     if($stmt->num_rows == 1){
-        $stmt->bind_result($display_name, $user_key);
+        $stmt->bind_result($display_name, $user_key, $user_email);
         $stmt->fetch();
         $out['success'] = true;
         $out['displayName'] = $display_name;
@@ -146,6 +146,17 @@ function authentication_login(){
         
         // pass it back for them to use
         $out['accessToken'] = $access_token;
+        
+        // create an access_link
+        $access_link = get_server_uri() + '?t=' + $access_token;
+        
+        // queue an email to send them the new access_token
+        ob_start();
+        include('../email_templates/login_confirm.php');
+        $body = ob_get_contents();
+        ob_end_clean();
+        enqueue_email('login_confirm', $user_email, $display_name, 'Ten Breaths Map Login', $body);
+
         
     }else{
         $out['success'] = false;

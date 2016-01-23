@@ -10,14 +10,6 @@
     authentication_by_token($_GET['t']);
   }
   
-  // where are we
-  if( (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ){
-    $protocol = 'https://';
-  }else{
-    $protocol = 'http://';
-  }
-  $site_url = $protocol . $_SERVER['SERVER_NAME'] . '/';
-  
   // default values for center and zoom
   $center_lon = 0;
   $center_lat = 0;
@@ -58,7 +50,7 @@
       $social_title = 'A Ten Breaths Place by ' . $row['display_name'] . ' on ' . getDateStringFromSurvey($survey);
       
       // set up the facebook meta tagging so fb can crawl the page
-      $fb_tags['og:url']  = $site_url . 'survey-' . $survey_key;
+      $fb_tags['og:url']  = get_server_uri() . 'survey-' . $survey_key;
       $fb_tags['og:type']  = 'place';
       $fb_tags['og:site_name'] = 'Ten Breaths Map';
       $fb_tags['place:location:latitude'] = $survey->geolocation->latitude;
@@ -74,7 +66,7 @@
         }
       }
       if($row['photo']){
-         $image_url = $site_url . 'data/' . $row['photo'];
+         $image_url = get_server_uri() . 'data/' . $row['photo'];
          $fb_tags['og:image'] = $image_url;
          $twitter_tags['twitter:image'] = $image_url;
       }
@@ -151,7 +143,7 @@
           
           ></div>
     </div>
-    <div id="popup" class="ol-popup" data-tenbreaths-base-url="<?php echo $site_url ?>">
+    <div id="popup" class="ol-popup" data-tenbreaths-base-url="<?php echo get_server_uri() ?>">
       <a href="#" id="popup-closer" class="ol-popup-closer"></a>
       <div id="popup-content"></div>
       <button id="popup-fb-share" >FaceBook</button>
