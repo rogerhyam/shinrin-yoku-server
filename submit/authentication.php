@@ -16,6 +16,8 @@ function authentication_by_token($token){
         $stmt->fetch();
         return $_SESSION['user_key'];
     }else{
+        unset($_SESSION['display_name']);
+        unset($_SESSION['user_key']);
         return null;
     }
     
@@ -70,15 +72,16 @@ function authentication_signup(){
     
     // they will need an access token
     $access_token = authentication_generate_access_token();
+    $validation_token = authentication_generate_access_token();
     
     // if no errors at this stage try and create users
     if(count($errors) == 0){
         // create the user row
         $user_key = uniqid('USER:', true);
         $password_hash = md5($password);
-        $stmt = $mysqli->prepare("INSERT INTO users (`display_name`, `email`, `password`, `key`, `access_token`, `created`) VALUES (?, ?, ?, ?,?, now())");
+        $stmt = $mysqli->prepare("INSERT INTO users (`display_name`, `email`, `password`, `key`, `access_token`, `validation_token`, `created`) VALUES (?, ?, ?, ?, ?, ?, now())");
         error_log($mysqli->error);
-        $stmt->bind_param("sssss", $display_name, $email, $password_hash, $user_key, $access_token);
+        $stmt->bind_param("ssssss", $display_name, $email, $password_hash, $user_key, $access_token, $validation_token);
         $stmt->execute();
         if($stmt->affected_rows != 1){
             error_log($mysqli->error);
@@ -93,6 +96,16 @@ function authentication_signup(){
             $stmt->close();
         }
     }
+    
+    $confirmation_link = get_server_uri() . 'confirm_email.php?t=' . $validation_token;
+    $access_link = get_server_uri() . '?t=' . $access_token;
+   
+    // queue an email to send them email validation token
+    ob_start();
+    include('../email_templates/confirm_email.php');
+    $body = ob_get_contents();
+    ob_end_clean();
+    enqueue_email('confirm_email', $email, $display_name, 'Ten Breaths Map: Confirm Email', $body);
     
     // return some json 
     if(count($errors) > 0){
@@ -187,8 +200,8 @@ function authentication_forgot(){
         $password_hash = md5($new_password);
         $validation_token = authentication_generate_access_token();
         
-        $stmt2 = $mysqli->prepare("UPDATE users SET validation_token = ? WHERE `id` = ?");
-        $stmt2->bind_param('si', $validation_token, $user_id);
+        $stmt2 = $mysqli->prepare("UPDATE users SET validation_token = ?, password_new = ? WHERE `id` = ?");
+        $stmt2->bind_param('ssi', $validation_token, $password_hash, $user_id);
         $stmt2->execute();
 
         // send an email to ask for email validation again.

@@ -123,6 +123,9 @@
              <li><a href="/">Ten Breaths</a></li>
              <li><a id="menu-nearby-link" href='#' onclick="mapsConfig.zoomToCurrentLocation()" >Nearby</a></li>
              <li><a href='#' onclick="mapsConfig.showPopupPage('about-page')" >About</a></li>
+             <?php if(@$_SESSION['user_key']){ ?>
+                 <li><a href="/?t=logout" >Log Out</a></li>
+             <?php } // user key check ?>
           </ul>
       </div>
     </header>
@@ -141,6 +144,8 @@
           data-tb-survey="<?php echo $survey_key; ?>"
           data-tb-user-key="<?php echo isset($_SESSION['user_key']) ? $_SESSION['user_key'] : ""; ?>"
           
+          data-tb-pop-page="<?php echo @$_GET['pp'] ?>"
+          
           ></div>
     </div>
     <div id="popup" class="ol-popup" data-tenbreaths-base-url="<?php echo get_server_uri() ?>">
@@ -150,6 +155,7 @@
       <button id="popup-twitter-share" >Twitter</button>
       <button id="popup-mail" >Mail</button>
       <button id="popup-google-maps" >Google Earth</button>
+      <button id="popup-report" >Report</button>
     </div>
     
     <!-- About page -->
@@ -185,6 +191,13 @@
       <p>The book <a href="http://www.amazon.co.uk/dp/1937006395">Ten Breaths To Happiness: Touching Life in Its Fullness </a> by Glen Schneider was 
       helped to clarify the mindfulness technique to use and provides a good background reading.</p>
       
+    </div>
+    
+    <!-- message page -->
+    <div id="message-page" class="popup-page">
+      <a href="#" class="popup-page-closer">close</a>
+      <h2><?php echo @$_SESSION['message_title'] ?></h2>
+      <?php echo @$_SESSION['message_body'] ?>
     </div>
     
   </body>

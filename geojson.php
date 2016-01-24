@@ -25,11 +25,12 @@
       JOIN
           users as u on s.user_id = u.id
       WHERE
-        s.`public` = 1
+        ( s.`public` = 1 AND  u.validated = 1 )
       ";
-      
+  
+  // they are logged in so also show their hidden one
   if($user_key){
-    $sql .= " OR ( s.public = 0 AND u.key = '$user_key' )";
+    $sql .= " OR ( u.key = '$user_key' )";
   }
 
   $response = $mysqli->query($sql);

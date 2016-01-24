@@ -335,6 +335,13 @@ $( document ).ready(function() {
       window.location.href = 'mailto:?subject=Ten Breaths Map&body=' + $('#popup').data('href');
     });
     
+    // report a concern
+    $('#popup-report').on('click',function(){
+      var body = "I have a concern regarding this contribution:\n\n" + $('#popup').data('href');
+      body = encodeURIComponent(body);
+      window.location.href = 'mailto:?to=r.hyam@rbge.org.uk&subject=Ten Breaths Map: Report Concern&body=' + body;
+    });
+    
     // link goes to google maps
     $('#popup-google-maps').on('click',function(){
       
@@ -350,7 +357,13 @@ $( document ).ready(function() {
         window.open(gmapUri, '_blank');
         
     });
+
     
+    
+    // if there is a popup page set then open that by default
+    if($('#map-canvas').data('tb-pop-page')){
+      mapsConfig.showPopupPage($('#map-canvas').data('tb-pop-page'));
+    }
     
    
 }); // end doc ready
