@@ -12,51 +12,7 @@
        exit();
     }
 
-    // are we uploading a file?
-    if( isset($_FILES["file"]) ){
 
-        // load the survey by the id of the filename
-        $survey_key = preg_replace('/\\.[^.\\s]{3,4}$/', '', $_FILES["file"]["name"]);
-        error_log($survey_key);
-        $response = $mysqli->query("SELECT * FROM submissions WHERE survey_key = '$survey_key'");
-        
-        // fail if we can't find the survey
-        if($response->num_rows < 1){
-            error_log("Can't find survey for $survey_key");
-            header("HTTP/1.1 409 Conflict");
-            echo "Sorry. Failed to add photo to survey. Can't find survey the survey in the db.";
-            exit();
-        }
-        
-        $row = $response->fetch_assoc();
-        $survey = json_decode($row['survey_json']);
-        $date_path = str_replace('-', '/', substr($row['created'], 0,10) );
-        $dir_path = '../data/' . $date_path;
-        error_log($dir_path);
-        if (!is_dir($dir_path)) {
-            mkdir($dir_path, 0777, true);
-        }
-        
-        if(move_uploaded_file($_FILES["file"]["tmp_name"], $dir_path . '/' . $_FILES["file"]["name"])){
-            $photo_path = $date_path . '/' . $_FILES["file"]["name"]; // stored in db
-            $mysqli->query("UPDATE submissions SET photo = '$photo_path' WHERE survey_key = '$survey_key'");
-        }
-        
-        if($response->num_rows < 1){
-            error_log("Failed to update survey for photo. Key: $survey_key");
-            header("HTTP/1.1 500 Internal Error");
-            echo "Sorry. Failed to add photo to survey.";
-            exit();
-        }
-        
-        // fixme: check file size
-        // fixme: check file type
-        // fixme: check application id
-    
-        echo 0;
-        
-    }
-    
     if(isset($_POST['survey'])){
         
         $survey_json = $_POST['survey'];
@@ -106,9 +62,30 @@
             echo "The user key provided isn't recognised.";
             exit();
         }
+        
+        // process the attached file - there always is one!
+        // but we ignore the RED_DOT.png place holder image
+        if($_FILES["file"]["name"] != 'RED_DOT.png'){
+
+            $date_path = (new DateTime())->format('Y/m/d');
+            $dir_path = '../data/' . $date_path;
+            error_log($dir_path);
+            if (!is_dir($dir_path)) {
+                mkdir($dir_path, 0777, true);
+            }
+            
+            if(move_uploaded_file($_FILES["file"]["tmp_name"], $dir_path . '/' . $_FILES["file"]["name"])){
+                $photo_path = $date_path . '/' . $_FILES["file"]["name"]; // stored in db
+                $mysqli->query("UPDATE submissions SET photo = '$photo_path' WHERE survey_key = '$survey_key'");
+            }
+            
+        }
     
     }
     
+    
+    // if this is an authentication request then deal with it 
+    // using included file
     if(isset($_POST['authentication'])){
         
         require_once('authentication.php');
@@ -120,7 +97,6 @@
         }
         
     }
-    
     
 function get_api_key_id($user_id, $api_key){
     
@@ -216,8 +192,6 @@ function render_test_form(){
     </script>
 </head>
 <body>
-
-<?php echo display_name_available($_GET['dn']); ?>
 
 <form action="index.php" method="POST" enctype="multipart/form-data">
     <h2>Select image to upload</h2>

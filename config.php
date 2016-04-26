@@ -31,7 +31,6 @@
       printf("Error loading character set utf8: %s\n", $mysqli->error);
     }
     
-    
     /*
      We need to get a display string that is the local time
     */
