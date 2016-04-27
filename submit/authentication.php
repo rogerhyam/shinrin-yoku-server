@@ -88,24 +88,26 @@ function authentication_signup(){
             $errors[] = "Database error. Please try later.";
             $stmt->close();
         }else{
+            
             $id = $stmt->insert_id;
             error_log("CREATED user: " . $id);
             $out['userKey'] = $user_key;
             $out['displayName'] = $display_name;
             $out['accessToken'] = $access_token;
             $stmt->close();
+            
+            $confirmation_link = get_server_uri() . 'confirm_email.php?t=' . $validation_token;
+            $access_link = get_server_uri() . '?t=' . $access_token;
+            
+            // queue an email to send them email validation token
+            ob_start();
+            include('../email_templates/confirm_email.php');
+            $body = ob_get_contents();
+            ob_end_clean();
+            enqueue_email('confirm_email', $email, $display_name, 'Ten Breaths Map: Confirm Email', $body);
+            
         }
     }
-    
-    $confirmation_link = get_server_uri() . 'confirm_email.php?t=' . $validation_token;
-    $access_link = get_server_uri() . '?t=' . $access_token;
-   
-    // queue an email to send them email validation token
-    ob_start();
-    include('../email_templates/confirm_email.php');
-    $body = ob_get_contents();
-    ob_end_clean();
-    enqueue_email('confirm_email', $email, $display_name, 'Ten Breaths Map: Confirm Email', $body);
     
     // return some json 
     if(count($errors) > 0){
