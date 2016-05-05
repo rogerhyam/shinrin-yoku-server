@@ -168,28 +168,66 @@
       It is hoped the map will inform decision making in urban planning, health and nature conservation.
       </p>
       <p>The system consists of a mobile phone app and database exposed through this website.
-         Points are added to the map by surveyors doing a simple mindfulness practice at the locations they find restorative when they find them restorative.</p>
+         Points are added to the map by contributors doing a simple mindfulness practice at the locations they find restorative when they find them restorative.</p>
       <p>The mindfulness practice is an established Buddhist technique. It involves holding ones attention still whilst taking ten conscious breaths.</p>
-      <p>The mobile phone app records the precise location of the place whilst helping the surveyor count their breaths.
+      <p>The mobile phone app records the precise location of the place whilst helping the contributor count their breaths.
       It also enables them to add a photo and some words that sum up their experience to the report.</p>
       
       <p>The act of surveying locations for the map should be an act of healing.
-      In drawing the map we aim to deepen the surveyors' connections with nature
+      In drawing the map we aim to deepen the contributots' connections with nature
       as well as produce data that is useful for science.</p>
       
+      <h3>Video Introduction</h3>
+      <p><iframe width="560" height="315" src="https://www.youtube.com/embed/BSMgQ3iSS4M" frameborder="0" allowfullscreen></iframe></p>
+      
+      <h3>Get the App</h3>
+      
+      <p>
+        <a href='https://play.google.com/store/apps/details?id=uk.org.rbge.hyam.tenbreathsmap&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img id="google-badge" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+        <a href="https://itunes.apple.com/gb/app/ten-breaths-map/id1109365108?mt=8"><img id="apple-badge" src="images/apple_badge_135x40.png" /></a>
+      </p>
+      
       <h3>Status</h3>
-      <p>We are still in the "playing" phase where we test out different ideas and technologies to see what is feasible.
-      This is way before a Beta phase or even and Alpha phase!</p>
+      <p>
+        <ul>
+          <li><strong>1<sup>st</sup> May 2016: </strong> We have just gone live.</li>
+          <li>Version 1.0 of the app is available in the Apple App Store and in the Google Play Store.</li>
+          <li>We are looking for our first batch adventurous contributors.</li>
+          <li>If you would like to participate please download the app. </li>
+        </ul>
+      </p>
       
-      <h2>Contact</h2>
-      <p>Any questions or comments? I'd love to hear from you. Roger Hyam <a href="mailto:r.hyam@rbge.org.uk">r.hyam@rbge.org.uk</a></p>
-      
-      <h3>Thanks</h3>
-      <p>The data data layers presented on the map that start with SNH are pulled live from the 
-      <a href="http://www.snh.gov.uk/publications-data-and-research/snhi-information-service/">Scottish Natural Heritage Information Service</a> under an 
-      <a href="http://www.nationalarchives.gov.uk/doc/open-government-licence/" >Open Government Licence</a>.</p>
-      <p>The book <a href="http://www.amazon.co.uk/dp/1937006395">Ten Breaths To Happiness: Touching Life in Its Fullness </a> by Glen Schneider was 
-      helped to clarify the mindfulness technique to use and provides a good background reading.</p>
+      <h3>About Us</h3>
+     		<p>
+				    <a href="http://www.rbge.org.uk"><img id="rbge-logo" src="images/rbge_logo.jpg"/></a>
+				</p>
+				<p>
+					The Ten Breaths Map is being coordinated by the 
+					<a href="http://www.rbge.org.uk">Royal Botanic Garden Edinburgh</a>
+					as part of our contribution to the Edinburgh Living Landscape and
+					<a href="http://www.gov.scot/Topics/Environment/Wildlife-Habitats/biodiversity/BiodiversityStrategy">
+						Scotland’s Biodiversity Strategy</a>
+					 - particularly
+					<strong>Big Step 3:</strong> <em>Quality Greenspace for Health and Education Benefits</em>
+					- by providing the evidence to deliver
+					<strong>Priority Project 5:</strong> <em>More People Experiencing and Enjoying Nature</em>
+					and
+					<strong>Priority Project 7:</strong> <em>Developing Scotland’s Natural Health Service</em>.
+				</p>
+				<p>
+				    <img id="ell-logo" src="images/ell_logo.jpg"/>
+				</p>
+				<p>
+					Although these first projects concern Edinburgh and Scotland the map
+					covers the entire globe and could be used for projects, campaigns or
+					fun anywhere. The software is open source and we intend to keep the data
+					as open as we can without compromising contributors' privacy. If you have project
+					ideas please get in touch and we will do what we can to support and partner with you.
+				</p>
+				
+		  <h3>See Also</h3>
+      <p>The book <a href="http://www.amazon.co.uk/dp/1937006395">Ten Breaths To Happiness: Touching Life in Its Fullness </a> by Glen Schneider
+      is a great description of the mindfulness technique to use and background reading - highly recommended.</p>
       
     </div>
     

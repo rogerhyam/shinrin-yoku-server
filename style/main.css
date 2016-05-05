@@ -1,4 +1,5 @@
 html, body {
+    font-family: sans-serif;
     margin: 0px;
     width: 100%;
     height: 100%;
@@ -163,4 +164,22 @@ header {
 .osm-tag-cloud-10{
   font-size:200%;
   z-index: 1010;
+}
+
+.popup-page #ell-logo,
+.popup-page #rbge-logo{
+  width: 400px;
+  max-width: 90%;
+}
+
+#apple-badge{
+  height: 52px;
+  padding-top: 9px;
+  padding-bottom: 15px;
+  max-width: 90%;
+}
+
+#google-badge{
+  height: 80px;
+  max-width: 90%;
 }
