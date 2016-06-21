@@ -12,14 +12,13 @@
   // is closed - kind of like basic auth.
   session_set_cookie_params(0);
   session_start();
-
-    $db_host = 'localhost';
-    $db_database = 'tenbreaths';
-    $db_user = 'tenbreaths';
-    $db_password = 'breaths10';
   
-    // create and initialise the database connection
-    $mysqli = new mysqli($db_host, $db_user, $db_password, $db_database);    
+  // include secret db details - no matter depth
+  $path = str_repeat('../', substr_count($_SERVER['PHP_SELF'], '/'));
+  require_once($path . 'tenbreaths_db_config.php');
+  
+  // create and initialise the database connection
+  $mysqli = new mysqli($db_host, $db_user, $db_password, $db_database);    
 
     // connect to the database
     if ($mysqli->connect_error) {
