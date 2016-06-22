@@ -183,3 +183,71 @@ header {
   height: 80px;
   max-width: 90%;
 }
+
+.popup-has-image{
+  min-height: 300px;
+}
+
+.popup-lacks-image .popup-lacks-comment hr{
+  display: none;
+}
+
+#popup-buttons{
+  border-top: none;
+}
+
+
+#popup-content strong{
+  font-size: 14px;
+  font-weight: normal;
+}
+
+
+/* buttons on popup */
+#popup-buttons{
+  border-top: solid 1px #ccc;
+  border-bottom: solid 1px #ccc;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  text-align: center;
+  margin-top: 0px;
+}
+
+#popup-buttons button{
+  border: none;
+  border-radius: 3px;
+  background-color: #eee;
+  font-size: 10px;
+  
+}
+
+#popup-buttons button:hover{
+  background-color: #ccc;
+}
+
+div.ol-popup hr{
+  border-top: 1px solid #ccc;
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+} 
+
+div.ol-popup button svg{
+  height:24px;
+  max-width: 24px;
+  margin: 2px;
+}
+
+/* Facebook */
+#popup-fb-share svg{
+  fill: #3B5998;
+}
+
+/* Twitter */
+#popup-twitter-share svg{
+  fill: #4099ff;
+}
+
+#popup-report svg{
+  fill: red;
+}

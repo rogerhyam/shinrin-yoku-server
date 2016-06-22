@@ -4,6 +4,7 @@
 */
 /* global ol */
 /* global mapsConfig */
+/* global $ */
 
 var mapsConfig = {};
 mapsConfig.baseLayers = {};
@@ -288,9 +289,13 @@ $( document ).ready(function() {
       
       var html = "<strong>" + feature.get('title') + "</strong>";
         
-        html += "<hr/>";
-        html += feature.get('description');
-    
+        if(feature.get('description') && feature.get('description').length > 0){
+          html += "<hr/>";
+          html += feature.get('description');
+        }else{
+          html += '<p/>';
+        }
+
         $('#popup-content').html( html );
         
         // set the facebook & other share url
@@ -301,12 +306,20 @@ $( document ).ready(function() {
         var coordinate = feature.getGeometry().getCoordinates();
         overlay.setPosition(coordinate);
         
-        
         // also set the location data so we can launch a google maps link
         var longLat = ol.proj.transform(coordinate, 'EPSG:3857', 'EPSG:4326');
         $('#popup').data('longitude', longLat[0]);
         $('#popup').data('latitude', longLat[1]);
         $('#popup').data('zoom', mapsConfig.map.getView().getZoom());
+        
+        // also set the height depending on if there is an image or not
+        if(feature.get('has_image')){
+          $('#popup').addClass('popup-has-image');
+          $('#popup').removeClass('popup-lacks-image');
+        }else{
+          $('#popup').addClass('popup-lacks-image');
+          $('#popup').removeClass('popup-has-image');
+        }
 
     };
     

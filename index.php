@@ -91,6 +91,7 @@
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:fb="https://www.facebook.com/2008/fbml" >
   <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# place: http://ogp.me/ns/place#">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     
@@ -151,11 +152,38 @@
     <div id="popup" class="ol-popup" data-tenbreaths-base-url="<?php echo get_server_uri() ?>">
       <a href="#" id="popup-closer" class="ol-popup-closer"></a>
       <div id="popup-content"></div>
-      <button id="popup-fb-share" >FaceBook</button>
-      <button id="popup-twitter-share" >Twitter</button>
-      <button id="popup-mail" >Mail</button>
-      <button id="popup-google-maps" >Google Earth</button>
-      <button id="popup-report" >Report</button>
+      <div id="popup-buttons">
+        <button id="popup-fb-share" >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" id="gel-icon-facebook">
+            <path d="M12.1 32V17H8v-5.4h4.1V7c0-3.6 2.4-7 8-7 2.2 0 3.9.2 3.9.2l-.1 5.1h-3.6c-2 0-2.3.9-2.3 2.4v3.9h6l-.3 5.4H18v15h-5.9z"></path>
+          </svg>
+          <br/>Facebook
+        </button>
+        <button id="popup-twitter-share" >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" id="gel-icon-twitter">
+            <path d="M32 6.1c-1.2.5-2.4.9-3.8 1 1.4-.8 2.4-2.1 2.9-3.6-1.3.8-2.7 1.3-4.2 1.6C25.7 3.8 24 3 22.2 3c-3.6 0-6.6 2.9-6.6 6.6 0 .5.1 1 .2 1.5-5.5-.3-10.3-2.9-13.6-6.9-.6 1-.9 2.1-.9 3.3 0 2.3 1.2 4.3 2.9 5.5-1.1 0-2.1-.3-3-.8v.1c0 3.2 2.3 5.8 5.3 6.4-.6.1-1.1.2-1.7.2-.4 0-.8 0-1.2-.1.8 2.6 3.3 4.5 6.1 4.6-2.2 1.8-5.1 2.8-8.2 2.8-.5 0-1.1 0-1.6-.1 3 1.8 6.5 2.9 10.2 2.9 12.1 0 18.7-10 18.7-18.7v-.9c1.2-.9 2.3-2 3.2-3.3z"/>
+          </svg>
+          <br/>Twitter
+        </button>
+        <button id="popup-mail" >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" id="gel-icon-email">
+            <path d="M16 19.4l16-15V3H0v26h32V8l-4 4v13H4V8.2l12 11.2zm0-2.8L5.8 7h20.4L16 16.6z"/>
+          </svg>
+          <br/>Email
+        </button>
+        <button id="popup-google-maps" >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" id="gel-icon-map">
+            <path d="M25.1 17.2c1.2-1.8 1.9-3.9 1.9-6.2 0-6.1-4.9-11-11-11S5 4.9 5 11c0 2.3.7 4.4 1.9 6.2L16 32l9.1-14.8zM16 7c2.2 0 4 1.8 4 4s-1.8 4-4 4-4-1.8-4-4 1.8-4 4-4z"/>
+          </svg>
+          <br/>Google
+        </button>
+        <button id="popup-report" >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" id="gel-icon-alert">
+            <path d="M16 2L0 30h32L16 2zm2 25h-4v-4h4v4zm-4-6V11h4v10h-4z"/>
+          </svg>
+          <br/>Report
+        </button>
+      </div>
     </div>
     
     <!-- About page -->

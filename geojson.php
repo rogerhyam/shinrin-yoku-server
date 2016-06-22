@@ -59,7 +59,7 @@
       $feature->properties->user_key = $row['user_key'];
       $feature->properties->public_visible = $row['public'];
       
-      $desc = '<div>';
+      $desc = '';
       if($row['photo']){
         
         // where are we
@@ -73,7 +73,11 @@
         $image_url = $base_url . $row['photo'];
 
         $desc .= "<img src=\"$image_url\" />";
+        
+        $feature->properties->has_image = true;
 
+      }else{
+        $feature->properties->has_image = false;
       }
       
       // comments if they made any
@@ -83,7 +87,6 @@
           $desc .= "<p>$comment</p>";
         }
       }
-
       
       $feature->properties->description = $desc;
 
