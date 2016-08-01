@@ -91,7 +91,6 @@ header {
   padding: 1em;
   background-color: #ffffff;
   border: solid gray 1px;
-  opacity: 0.9;
   border-radius: 1em;
   overflow-y: auto;
 }
