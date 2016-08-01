@@ -93,6 +93,7 @@ header {
   border: solid gray 1px;
   border-radius: 1em;
   overflow-y: auto;
+  max-width: 50em;
 }
 
 .popup-page-closer{

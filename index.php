@@ -218,6 +218,10 @@
       <h3>Status</h3>
       <p>
         <ul>
+          <li>
+            <strong>1<sup>st</sup> August 2016: </strong> Soft launch day. After a few teething problems and now with a new introduction video we are starting a gentle roll out to friendly testers.
+            If you are interested please download the app and let us know how you get on.
+          </li>
           <li><strong>1<sup>st</sup> May 2016: </strong> We have just gone live.</li>
           <li>Version 1.0 of the app is available in the Apple App Store and in the Google Play Store.</li>
           <li>We are looking for our first batch adventurous contributors.</li>
@@ -256,6 +260,8 @@
 		  <h3>See Also</h3>
       <p>The book <a href="http://www.amazon.co.uk/dp/1937006395">Ten Breaths To Happiness: Touching Life in Its Fullness </a> by Glen Schneider
       is a great description of the mindfulness technique to use and background reading - highly recommended.</p>
+      
+      <a href="#" class="popup-page-closer">close</a>
       
     </div>
     
