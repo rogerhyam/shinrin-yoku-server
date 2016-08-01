@@ -202,7 +202,7 @@
       It also enables them to add a photo and some words that sum up their experience to the report.</p>
       
       <p>The act of surveying locations for the map should be an act of healing.
-      In drawing the map we aim to deepen the contributots' connections with nature
+      In drawing the map we aim to deepen the contributors' connections with nature
       as well as produce data that is useful for science.</p>
       
       <h3>Video Introduction</h3>
