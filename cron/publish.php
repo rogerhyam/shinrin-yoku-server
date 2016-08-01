@@ -1,6 +1,6 @@
 <?php
 
-  require_once('../config.php');
+  require_once('config.php');
 
   // run through all the records that haven't been published
   $response = $mysqli->query('SELECT * FROM submissions WHERE ft_row_id IS NULL'); // FIXME - add check for moderated

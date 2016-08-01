@@ -14,7 +14,13 @@
   session_start();
   
   // include secret db details - no matter depth
-  $path = str_repeat('../', substr_count($_SERVER['PHP_SELF'], '/'));
+  if($_SERVER['PHP_SELF']){
+     $path = str_repeat('../', substr_count($_SERVER['PHP_SELF'], '/'));
+  }else{
+     // running cli so assume we are in cron/**.php
+     $path = '../../';
+  }
+  
   require_once($path . 'tenbreaths_db_config.php');
   
   // create and initialise the database connection

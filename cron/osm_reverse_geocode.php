@@ -1,6 +1,6 @@
 <?php
 
-include_once('../config.php');
+include_once('config.php');
 
 // if the survey id is set the just process that one
 // otherwise work through the next 10 that don't have results

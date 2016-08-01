@@ -1,6 +1,6 @@
 <?php
 
-include_once('../config.php');
+include_once('config.php');
 include('utils.php');
    
 // if the survey id is set the just process that one

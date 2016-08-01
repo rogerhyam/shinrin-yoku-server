@@ -1,5 +1,5 @@
 <?php
-    require_once('../config.php');
+    require_once('config.php');
     
     // this is called by cron every once in a while and sends the
     // emails queued in the email_queue table
