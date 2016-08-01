@@ -1,6 +1,5 @@
 <?php
-
-    $video_id = "BSMgQ3iSS4M";
+    $video_id = "3_1LlnHLwiw";
     $video_uri = "https://youtu.be/$video_id";
     header( "Location: $video_uri" ) ;
     
