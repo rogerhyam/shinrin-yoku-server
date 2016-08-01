@@ -16,7 +16,7 @@
 
             $mysqli->query("UPDATE email_queue SET attempt = now(), attempt_count = attempt_count + 1 WHERE id = $queue_id");
             $mail = get_mail();
-            $mail->setFrom('roger@hyam.net', 'Ten Breaths Map');
+            $mail->setFrom('r.hyam@rbge.org.uk', 'Ten Breaths Map');
             $mail->addAddress($to_address, $to_name);
             $mail->isHTML(true);
             $mail->Subject = $subject;
