@@ -30,6 +30,7 @@
                 $stmt2->execute();
             } else {
                 $mysqli->query("UPDATE email_queue SET success = now() WHERE id = $queue_id");
+                echo "Email sent to: $to_address \n";
             }
     
         
@@ -40,7 +41,7 @@
     
         // we keep the smtp config details in a file
         // outside the web root and github for security
-        include("../../tenbreaths_email_config.php");
+        include("../tenbreaths_email_config.php");
     
         $mail = new PHPMailer;
     
@@ -52,6 +53,10 @@
         $mail->Password = $email_config['password'];  // SMTP password
         $mail->SMTPSecure = 'tls';                    // Enable TLS encryption, `ssl` also accepted
         $mail->Port = $email_config['port'];          // TCP port to connect to
+        
+        if(isset($email_config['bcc']) && $email_config['bcc']){
+            $mail->addBCC($email_config['bcc']);
+        }
     
         return $mail;
     
