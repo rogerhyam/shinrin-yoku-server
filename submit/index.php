@@ -86,7 +86,7 @@
         include('../email_templates/monitor.php');
         $body = ob_get_contents();
         ob_end_clean();
-        enqueue_email('monitor', 'monitor', 'Monitor', 'Ten Breaths Map Monitor', $body);
+        enqueue_email('monitor', 'roger@hyam.net', 'Monitor', 'Ten Breaths Map Monitor', $body);
     
     }
     
